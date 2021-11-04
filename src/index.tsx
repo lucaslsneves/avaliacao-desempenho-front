@@ -7,11 +7,20 @@ import theme from "./config/theme"
 import Login from "./pages/login"
 import reportWebVitals from "./reportWebVitals"
 import * as serviceWorker from "./serviceWorker"
+import {
+  BrowserRouter as Router,
+} from "react-router-dom";
+import Routes from "./routes"
+
+
 
 ReactDOM.render(
   <ChakraProvider theme={theme}>
+    <Router  >
+      <Routes/>
+    </Router>
     <ColorModeScript initialColorMode="dark" />
-   <Login/>
+
   </ChakraProvider>,
   document.getElementById("root"),
 )

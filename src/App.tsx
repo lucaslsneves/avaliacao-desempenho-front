@@ -6,7 +6,7 @@ import {
   ChakraProvider,
   Box,
   Text,
-  Link,
+  
   VStack,
   Code,
   Grid,
@@ -17,7 +17,7 @@ import { ColorModeSwitcher } from "./ColorModeSwitcher"
 import { Logo } from "./Logo"
 import theme from './config/theme'
 import Login from "./pages/login"
-
+import React from "react";
 
 
 export const App = () => {

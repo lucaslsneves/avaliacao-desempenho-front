@@ -24,6 +24,7 @@ import { ColorModeSwitcher } from '../ColorModeSwitcher'
 import InputApp from '../components/input'
 import api from '../services/api'
 import { findDOMNode } from 'react-dom'
+import { useHistory } from 'react-router-dom'
 
 export default function Login() {
   const theme = useColorModeValue("light", "dark");
@@ -36,6 +37,8 @@ export default function Login() {
   const [password, setPassword] = React.useState("");
 
   const colorErrorText = useColorModeValue('red.400', 'red.200')
+  
+  let history = useHistory();
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -43,22 +46,30 @@ export default function Login() {
       setLoading(true)
       const response = await api.post('/login' , {cpf , password})
       if (response.status === 201) {
+        localStorage.setItem("isAuthenticated", 'true');
+        localStorage.setItem("token" , response.data.token.token)
         setError('')
+        history.push('/dashboard')
         console.log(response)
       } else {
         setError('Erro inesperado, tente novamente em alguns minutos!')
       }
     } catch (e) {
-      const data = e.response.data
-      if (e.response.status === 400) {
-        if(data.rule === 'required') {
-          setError(`O campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} é obrigatório`)
-        }else if(data.rule === 'invalid credentials'){
-          setError(`Campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} inválido`)
+      if(e.response){
+        const data = e.response.data
+        if (e.response.status === 400) {
+          if(data.rule === 'required') {
+            setError(`O campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} é obrigatório`)
+          }else if(data.rule === 'invalid credentials'){
+            setError(`Campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} inválido`)
+          }
+        }else {
+            setError('Erro inesperado, tente novamente em alguns minutos!')
         }
       }else {
-          setError('Erro inesperado, tente novamente em alguns minutos!')
+        setError('Erro inesperado, tente novamente em alguns minutos!')
       }
+
      
     }finally {
       setLoading(false)
@@ -85,7 +96,7 @@ export default function Login() {
   }
   return (
     <>
-      <Container minH={'100vh'} minW={'100vw'} bg={useColorModeValue('gray.50', 'gray.800')} >
+      <Container minH={'100vh'} minW={'100vw'} bg={useColorModeValue('gray.100', 'gray.900')} >
 
 
         <Flex position="relative" flexDirection="column" justifyContent="center" minH={'100vh'} maxWidth="1280px" margin="0 auto">
