@@ -36,6 +36,7 @@ import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { useHistory } from 'react-router';
+import { getParseTreeNode } from 'typescript';
 
 interface LinkItemProps {
   name: string;
@@ -43,10 +44,10 @@ interface LinkItemProps {
 }
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Avaliações', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'Lorem', icon: FiTrendingUp },
+  { name: 'Lorem', icon: FiCompass },
+  { name: 'Lorem', icon: FiStar },
+  { name: 'Lorem', icon: FiSettings },
 ];
 
 
@@ -130,17 +131,15 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: 'cyan.400',
-          color: 'white',
+          bg: useColorModeValue('green.400', "green.200"),
+          color: useColorModeValue('white', "gray.800"),
         }}
         {...rest}>
         {icon && (
           <Icon
             mr="4"
             fontSize="16"
-            _groupHover={{
-              color: 'white',
-            }}
+            
             as={icon}
           />
         )}
@@ -200,16 +199,13 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
               <HStack>
                 <Avatar
                   size={'sm'}
-                  src={
-                    'https://images.unsplash.com/photo-1619946794135-5bc917a27793?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
-                  }
                 />
                 <VStack
                   display={{ base: 'none', md: 'flex' }}
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
-                  <Text fontSize="sm">Justina Clark</Text>
+                  <Text fontSize="sm">Lucas Luz</Text>
                   <Text fontSize="xs" color="gray.600">
                     Admin
                   </Text>
