@@ -15,7 +15,7 @@ export default function RouteWrapper({
   }
 
   if (signed === "true" && !isPrivate) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/avaliacoes" />;
   }
 
   const Component = component

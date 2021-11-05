@@ -43,8 +43,8 @@ interface LinkItemProps {
   icon: IconType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Avaliações', icon: FiHome },
-  { name: 'Lorem', icon: FiTrendingUp },
+  { name: 'Minhas Avaliações', icon: FiHome },
+  { name: 'Todas Avaliações', icon: FiTrendingUp },
   { name: 'Lorem', icon: FiCompass },
   { name: 'Lorem', icon: FiStar },
   { name: 'Lorem', icon: FiSettings },
@@ -139,7 +139,6 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
           <Icon
             mr="4"
             fontSize="16"
-            
             as={icon}
           />
         )}

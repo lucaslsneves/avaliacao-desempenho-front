@@ -49,7 +49,7 @@ export default function Login() {
         localStorage.setItem("isAuthenticated", 'true');
         localStorage.setItem("token" , response.data.token.token)
         setError('')
-        history.push('/dashboard')
+        history.push('/avaliacoes')
         console.log(response)
       } else {
         setError('Erro inesperado, tente novamente em alguns minutos!')
