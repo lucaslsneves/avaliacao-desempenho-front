@@ -7,28 +7,29 @@ import HorizontalCard from '../components/horizontal-card';
 import api from '../services/api';
 
 import { format } from 'date-fns'
+import { useLocation, useParams } from 'react-router-dom';
 
-export default function Dashboard(props) {
-  const [assessmentsGroups, setAssessmentsGroups] = React.useState([])
+export default function Avaliacoes(props) {
+  const [assessments, setassessments] = React.useState([])
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
 
   const history = useHistory()
+  const location = useLocation();
 
   const headingColor = useColorModeValue('gray.700', 'white');
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get('/logged-in-user/assessments-groups', {
+    api.get(`/logged-in-user/assessments-groups/assessments/${location.state?.id}`, {
       headers: {
         Authorization: token
       }
     }).then((response) => {
       setTimeout(() => {
-        setAssessmentsGroups(response.data.data)
+        setassessments(response.data.data)
         setIsLoaded(false)
         console.log(response.data.data)
       }, 1000)
-
     }).catch(e => {
       if (e.response) {
         if (e.response.status === 401) {
@@ -44,8 +45,16 @@ export default function Dashboard(props) {
   }, [])
 
 
+
+  if(!location.state?.id || !location.state?.assessmentGroupName){
+    history.push('/')
+    
+    return <div></div>;
+  }
+
+
   if (error) {
-    return <h1>Ops ALgo de errado</h1>
+    return <h1>Ops Algo de errado - Erro 500</h1>
   }
 
   if (isLoaded) {
@@ -61,14 +70,14 @@ export default function Dashboard(props) {
   if (!isLoaded) {
     return (
       <VStack spacing={6}>
-        <Heading color={headingColor}>Minhas Avaliações</Heading>
-        {assessmentsGroups.map(assessmentGroup => 
+        <Heading color={headingColor}> {location.state.assessmentGroupName}</Heading>
+        {assessments.map(assessment => 
         <HorizontalCard 
-          endDate={format(new Date(assessmentGroup.end_date), 'dd/MM/yyyy')} 
-          startDate={format(new Date(assessmentGroup.start_date), 'dd/MM/yyyy')} 
-          name={assessmentGroup.name} key={assessmentGroup.assessment_group_id}
-          handleClick={() => {
-            history.push(`/avaliacoes` , {assessmentGroupName: assessmentGroup.name , id: assessmentGroup.assessment_group_id})
+          description={assessment.name} 
+          subHeader="Tipo de avaliação"
+          name={`${assessment.type}°`} key={assessment.id}
+          onClick={() => {
+            history.push('/avaliacoes')
           }}
         />)}
       </VStack>

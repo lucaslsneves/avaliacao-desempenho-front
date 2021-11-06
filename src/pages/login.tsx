@@ -48,9 +48,9 @@ export default function Login() {
       if (response.status === 201) {
         localStorage.setItem("isAuthenticated", 'true');
         localStorage.setItem("token" , response.data.token.token)
+        localStorage.setItem("role" , response.data.user.role)
         setError('')
-        history.push('/avaliacoes')
-        console.log(response)
+        history.push('/dashboard')
       } else {
         setError('Erro inesperado, tente novamente em alguns minutos!')
       }
@@ -116,7 +116,7 @@ export default function Login() {
                 shadow="lg" spacing={6} width={"100%"} >
                 <FormControl>
                   <FormLabel>CPF</FormLabel>
-                  <InputApp maxLength="11" onChange={onChangeCpf} placeholder="Apenas números" type="text" />
+                  <InputApp maxLength="16" onChange={onChangeCpf} placeholder="Apenas números" type="text" />
                 </FormControl>
 
                 <FormControl>
