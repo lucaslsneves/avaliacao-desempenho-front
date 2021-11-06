@@ -21,7 +21,7 @@ export default function HorizontalCard({
         flex="35"
         bg={useColorModeValue("green.400", "green.200")}>
         <Text fontSize="sm" color={textColor}>{subHeader}</Text>
-        <Heading size={subHeader !== "Avaliação de Desempenho" ? "4xl" : "lg"} color={textColor}>{name}</Heading>
+        <Heading size={subHeader !== "Avaliação de Desempenho" ? "4xl" : "xl"} color={textColor}>{name}</Heading>
       </VStack>
       <VStack justifyContent="space-between" alignItems="flex-start" height="100%" padding="5" flex="65">
         <VStack  alignItems="flex-start">

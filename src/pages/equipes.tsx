@@ -8,9 +8,10 @@ import api from '../services/api';
 
 import { format } from 'date-fns'
 import { useLocation, useParams } from 'react-router-dom';
+import TeamHorizontalCard from '../components/horizontal-card-team';
 
-export default function Avaliacoes(props) {
-  const [assessments, setassessments] = React.useState([])
+export default function Equipes(props) {
+  const [teams, setTeams] = React.useState([])
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
 
@@ -20,13 +21,13 @@ export default function Avaliacoes(props) {
   const headingColor = useColorModeValue('gray.700', 'white');
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/logged-in-user/assessments-groups/assessments/${location.state?.id}`, {
+    api.get(`/logged-in-user/assessments/teams/${location.state?.assessmentId}`, {
       headers: {
         Authorization: token
       }
     }).then((response) => {
       setTimeout(() => {
-        setassessments(response.data.data)
+        setTeams(response.data.data)
         setIsLoaded(false)
         console.log(response.data.data)
       }, 1000)
@@ -46,7 +47,7 @@ export default function Avaliacoes(props) {
 
 
 
-  if(!location.state?.id || !location.state?.assessmentGroupName){
+  if(!location.state?.assessmentId || !location.state?.assessmentGroupName){
     history.push('/')
     
     return <div></div>;
@@ -70,15 +71,16 @@ export default function Avaliacoes(props) {
   if (!isLoaded) {
     return (
       <VStack spacing={6}>
-        <Heading size="lg" marginTop={3} color={headingColor}> {`Avaliação de Desempenho - ${location.state.assessmentGroupName}`}</Heading>
-        {assessments.map(assessment => 
-        <HorizontalCard 
-          description={assessment.name} 
-          subHeader="Tipo de avaliação"
-          name={`${assessment.type}°`} key={assessment.id}
-          handleClick={() => {
-            console.log('oi')
-            history.push('/equipes' , {assessmentId: assessment.id , assessmentGroupName : location.state.assessmentGroupName} )
+        <Heading size="lg" marginTop={3} color={headingColor}> {`Equipes - ${location.state.assessmentGroupName}`}</Heading>
+        {teams.map(team => 
+        <TeamHorizontalCard 
+          
+          unity={team.unity}
+          role={team.role}
+          name={team.area} key={team.id}
+          hierarchy={team.hierarchy}
+          onClick={() => {
+            history.push('/equipes' , {teamId: team.id} )
           }}
         />)}
       </VStack>

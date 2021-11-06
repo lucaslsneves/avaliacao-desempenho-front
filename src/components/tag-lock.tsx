@@ -1,10 +1,10 @@
 import { HStack, Heading, Text, useColorModeValue, VStack, Tag, TagLeftIcon, TagLabel } from '@chakra-ui/react'
 import React from 'react'
+import { FaLock } from 'react-icons/fa'
 
-export function MyTag(props) {
+export function TagLock() {
   return (
-
-    <Tag size={"sm"} variant="subtle" colorScheme="green">
+    <Tag size={"sm"} variant="subtle" colorScheme="red">
       <TagLeftIcon boxSize="12px" as={FaLock} />
       <TagLabel>Resultado Indisponível</TagLabel>
     </Tag>
