@@ -41,21 +41,23 @@ export default function Equipes(props) {
           setError(true)
           setIsLoaded(false)
         }
+        setError(true)
+        setIsLoaded(false)
       }
     })
   }, [])
 
 
 
-  if(!location.state?.assessmentId || !location.state?.assessmentGroupName){
+  if (!location.state?.assessmentId || !location.state?.assessmentGroupName) {
     history.push('/')
-    
+
     return <div></div>;
   }
 
 
   if (error) {
-    return <h1>Ops Algo de errado - Erro 500</h1>
+    return <h1>Ops,algo deu errado! Tente novamente mais tarde!</h1>
   }
 
   if (isLoaded) {
@@ -72,17 +74,16 @@ export default function Equipes(props) {
     return (
       <VStack spacing={6}>
         <Heading size="lg" marginTop={3} color={headingColor}> {`Equipes - ${location.state.assessmentGroupName}`}</Heading>
-        {teams.map(team => 
-        <TeamHorizontalCard 
-          
-          unity={team.unity}
-          role={team.role}
-          name={team.area} key={team.id}
-          hierarchy={team.hierarchy}
-          onClick={() => {
-            history.push('/equipes' , {teamId: team.id} )
-          }}
-        />)}
+        {teams.map(team =>
+          <TeamHorizontalCard
+            unity={team.unity}
+            role={team.role}
+            name={team.area} key={team.team_id}
+            hierarchy={team.hierarchy}
+            handleClick={() => {
+              history.push('/equipes/membros', { teamId: team.team_id , teamName: team.area })
+            }}
+          />)}
       </VStack>
 
     )

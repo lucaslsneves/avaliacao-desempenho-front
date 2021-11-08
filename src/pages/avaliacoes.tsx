@@ -41,6 +41,8 @@ export default function Avaliacoes(props) {
           setIsLoaded(false)
         }
       }
+      setError(true)
+      setIsLoaded(false)
     })
   }, [])
 
@@ -54,7 +56,7 @@ export default function Avaliacoes(props) {
 
 
   if (error) {
-    return <h1>Ops Algo de errado - Erro 500</h1>
+    return <h1>Ops,algo deu errado! Tente novamente mais tarde!</h1>
   }
 
   if (isLoaded) {

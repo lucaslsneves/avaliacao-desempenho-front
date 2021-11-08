@@ -9,6 +9,7 @@ import {Route as Route2 } from 'react-router-dom'
 import Page404 from '../pages/404';
 import Avaliacoes from '../pages/avaliacoes';
 import Equipes from '../pages/equipes';
+import EquipesMembros from '../pages/equipes-membros';
 
 
 export default function Routes() {
@@ -18,6 +19,7 @@ export default function Routes() {
       <Route path="/dashboard" exact component={Dashboard} isPrivate />
       <Route path="/avaliacoes" exact component={Avaliacoes} isPrivate />
       <Route path="/equipes" exact component={Equipes} isPrivate />
+      <Route path="/equipes/membros" exact component={EquipesMembros} isPrivate />
       <Route2 path="*" exact component={Page404}  />
     </Switch>
   );
