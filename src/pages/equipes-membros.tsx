@@ -1,12 +1,13 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { VStack, Heading } from '@chakra-ui/layout';
-import { Skeleton } from '@chakra-ui/react';
+import { Grid, Skeleton } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../services/api';
 
 import { useLocation} from 'react-router-dom';
 import TeamHorizontalCard from '../components/horizontal-card-team';
+import UserCard from '../components/user-card';
 
 export default function EquipesMembros(props) {
   const [members, setMembers] = React.useState([])
@@ -60,20 +61,27 @@ export default function EquipesMembros(props) {
 
   if (isLoaded) {
     return (
-      <VStack alignItems="center" w="100%" spacing={6}>
-        <Skeleton height="28px" width={"25%"} borderRadius="lg" />
-        <Skeleton height="48" width="100%" maxWidth="800px" borderRadius="lg" />
-        <Skeleton height="48" width="100%" maxWidth="800px" borderRadius="lg" />
-      </VStack>
+      <>
+      <Skeleton margin="0 auto" height="28px" width={"25%"} borderRadius="lg" />
+      <Grid mt="10" justifyItems="center" width="100%" templateColumns="repeat(4, 1fr)" gap={4}>
+        <Skeleton height="400" width="270px" borderRadius="lg" />
+        <Skeleton height="400" width="270px" borderRadius="lg" />
+        <Skeleton height="400" width="270px" borderRadius="lg" />
+        <Skeleton height="400" width="270px" borderRadius="lg" />
+      </Grid>
+      </>
     )
   }
 
   if (!isLoaded) {
     return (
-      <VStack spacing={6}>
-        <Heading size="lg" marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
-        {members.map(member => <h1>{member.name}</h1>)}
-      </VStack>
+      <>
+      <Heading textAlign="center" size="lg" marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
+      <Grid mt="10" justifyItems="center" width="100%" templateColumns="repeat(4, 1fr)" gap={4}>
+      
+        {members.map(member => <UserCard key={member.id} name={member.name} role={member.role}/>)}
+      </Grid>
+      </>
     )
   }
 
