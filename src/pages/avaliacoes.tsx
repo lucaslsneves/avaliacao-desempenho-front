@@ -80,7 +80,7 @@ export default function Avaliacoes(props) {
           name={`${assessment.type}°`} key={assessment.id}
           handleClick={() => {
             console.log('oi')
-            history.push('/equipes' , {assessmentId: assessment.id , assessmentGroupName : location.state.assessmentGroupName} )
+            history.push('/equipes' , {assessmentId: assessment.id , assessmentGroupName : location.state.assessmentGroupName , assessmentGroupId: location.state.id} )
           }}
         />)}
       </VStack>

@@ -3,11 +3,9 @@ import { VStack, Heading } from '@chakra-ui/layout';
 import { Skeleton } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
-import HorizontalCard from '../components/horizontal-card';
 import api from '../services/api';
 
-import { format } from 'date-fns'
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation} from 'react-router-dom';
 import TeamHorizontalCard from '../components/horizontal-card-team';
 
 export default function Equipes(props) {
@@ -20,6 +18,7 @@ export default function Equipes(props) {
 
   const headingColor = useColorModeValue('gray.700', 'white');
   useEffect(() => {
+    console.log(location.state.assessmentId)
     const token = 'Bearer ' + localStorage.getItem('token')
     api.get(`/logged-in-user/assessments/teams/${location.state?.assessmentId}`, {
       headers: {
@@ -81,7 +80,7 @@ export default function Equipes(props) {
             name={team.area} key={team.team_id}
             hierarchy={team.hierarchy}
             handleClick={() => {
-              history.push('/equipes/membros', { teamId: team.team_id , teamName: team.area })
+              history.push('/equipes/membros', { teamId: team.team_id , teamName: team.area , assessmentId: location.state.assessmentId })
             }}
           />)}
       </VStack>

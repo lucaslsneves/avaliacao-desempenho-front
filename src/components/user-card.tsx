@@ -6,15 +6,21 @@ import {
   Flex,
   Text,
   Stack,
-  Button,
-  Image,
   useColorModeValue,
   Icon,
 } from '@chakra-ui/react';
 import React from   'react'
 import {FaCheck} from 'react-icons/fa'
+import MyModal from './modal';
 
-export default function UserCard({name = "Colaborador" , role = "Cargo" , checked = false}) {
+export default function UserCard({
+  requestBody = {} , 
+  name = "Colaborador" , 
+  role = "Cargo" , 
+  checked = false , 
+  handleClick = () => {}  , 
+  assessmentId = 0 
+}) {
   const iconColor = useColorModeValue("white" , "gray.800");
   return (
       <Box
@@ -52,20 +58,7 @@ export default function UserCard({name = "Colaborador" , role = "Cargo" , checke
             </Heading>
             <Text color={'gray.500'}>{role}</Text>
           </Stack>
-
-          <Button
-            padding="12px 0"
-            w={'full'}
-            mt={"auto"}
-            bg={useColorModeValue('green.400', 'green.200')}
-            color={useColorModeValue('white', 'gray.800')}
-            rounded={'md'}
-            _hover={{
-              transform: 'translateY(-2px)',
-              boxShadow: 'lg',
-            }}>
-           Avaliar
-          </Button>
+          <MyModal requestBody={requestBody} title={`${name} | ${role}`} assessmentId={assessmentId}/>
         </VStack>
       </Box>
   );

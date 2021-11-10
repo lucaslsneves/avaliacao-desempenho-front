@@ -1,19 +1,39 @@
-import {  Heading, VStack } from '@chakra-ui/layout';
-import { Center } from '@chakra-ui/react';
-import React from 'react';
-import {  useLocation } from 'react-router';
+import { Box, Heading, Text, Button, VStack } from '@chakra-ui/react';
+import React from 'react'
+import { useHistory, useLocation } from 'react-router';
 
+export default function NotFound() {
+  const location = useLocation()
+  const history = useHistory()
+  return (
+    <VStack alignItems="center" justifyContent="center" h="100vh">
+    <Box textAlign="center" py={10} px={6}>
+      <Heading
+        display="inline-block"
+        as="h2"
+        size="2xl"
+        bgGradient="linear(to-r, teal.400, teal.600)"
+        backgroundClip="text">
+        404
+      </Heading>
+      <Text fontSize="18px" mt={3} mb={2}>
+        Essa página nao existe
+      </Text>
+      <Text color={'gray.500'} mb={6}>
+        {location.pathname}
+      </Text>
 
-export default function Page404(props) {
- const location = useLocation()
-
-
-
-  return(
-    <VStack alignItems="center" justifyContent="center" height={"100vh"}>
-      <Heading bgGradient="linear(to-l, #F56565, #C53030)" bgClip="text" >Error 404</Heading>
-      <Heading>{`Essa página não existe: ${location.pathname}`}</Heading>
+      <Button
+        colorScheme="teal"
+        bgGradient="linear(to-r, teal.400, teal.500, teal.600)"
+        color="white"
+        onClick={() => {
+          history.push('/')
+        }}
+        variant="solid">
+        Ir para página principal
+      </Button>
+    </Box>
     </VStack>
-  )
-  }
-
+  );
+}
