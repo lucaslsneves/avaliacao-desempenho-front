@@ -8,6 +8,9 @@ import {
   Stack,
   useColorModeValue,
   Icon,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
 } from '@chakra-ui/react';
 import React from   'react'
 import {FaCheck} from 'react-icons/fa'
@@ -32,14 +35,19 @@ export default function UserCard({
         rounded={'md'}
         overflow={'hidden'}>
         <Box
-          h={'100px'}
+          h={'120px'}
           w={'full'}
-          textAlign="end"
+          textAlign="center"
           padding="3"
           paddingBottom="0"
           bg={useColorModeValue('green.400' , 'green.200')}
         >
-        { checked && <Icon color={iconColor}  as={FaCheck} width="24px"/>}
+        { checked && (
+           <Tag size={"sm"} variant="subtle" color="gray.700">
+           <TagLeftIcon boxSize="12px" as={FaCheck} />
+           <TagLabel fontSize="md">Avaliado</TagLabel>
+         </Tag>
+        )}
         </Box>
         <Flex justify={'center'} mt={-12}>
           <Avatar
@@ -51,7 +59,7 @@ export default function UserCard({
           />
         </Flex>
 
-        <VStack height="240px" p={4}>
+        <VStack height="220px" p={4}>
           <Stack h="100%" spacing={0} justifyContent="center" align={'center'} mb={5}>
             <Heading mb="2"  fontSize="lg" textAlign="center" fontWeight={500} fontFamily={'body'}>
              {name}

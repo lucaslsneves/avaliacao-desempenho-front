@@ -53,11 +53,47 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
         Authorization: token
       }
     }).then((response) => {
-      setTimeout(() => {
-        setCompetencies(response.data)
-        setIsLoaded(false)
-        console.log(response.data)
-      }, 1000)
+      if(requestBody.evalueted) {
+        api.get(`/teams/members/grades?team=${requestBody.teamId}&member=${requestBody.collaboratorId}`, {
+          headers: {
+            Authorization: token
+          }
+        }).then((grades) => {
+          const gradesMap: any = {}
+          grades.data.forEach((grade : any) => {
+            gradesMap[grade.competency_id] = {value: grade.grade , justification: grade.justification}
+          }) 
+
+          
+          setCompetencies(response.data.map((competency : any) => {
+              competency.value = gradesMap[competency.competency_id].value
+              competency.justification = gradesMap[competency.competency_id].justification
+              return competency
+          }))
+         
+          setIsLoaded(false)
+        }).catch(e => {
+          if (e.response) {
+            if (e.response.status === 401) {
+              localStorage.setItem("token", "")
+              localStorage.setItem("isAuthenticated", 'false')
+              history.push('/')
+            } else {
+              setError(true)
+              setIsLoaded(false)
+              return
+            }
+            setError(true)
+            setIsLoaded(false)
+          }
+        })
+      }else {
+        setTimeout(() => {
+          setCompetencies(response.data)
+          setIsLoaded(false)
+        }, 1000)
+      }
+     
     }).catch(e => {
       if (e.response) {
         if (e.response.status === 401) {
@@ -67,6 +103,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
         } else {
           setError(true)
           setIsLoaded(false)
+          return
         }
         setError(true)
         setIsLoaded(false)
@@ -139,6 +176,9 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
       }
     })
   }
+
+
+
   if (isLoaded) {
     return (
       <>
@@ -200,25 +240,25 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
         }} onClick={onOpen}>
         Avaliar
       </Button>
-      <Modal scrollBehavior={"inside"} size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
+      <Modal as="form" scrollBehavior={"inside"} size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>{title}</ModalHeader>
           <ModalCloseButton />
-          <ModalBody as="form">
+          <ModalBody >
             {competencies.map((competency, i) => {
 
               return (
                 <>
                   <FormControl key={competency.id}>
                     <Tooltip label={competency.description} placement="top-start">
-                      <FormLabel cursor="pointer">{competency.name} - {competency.value || 0}
+                      <FormLabel cursor="pointer">{competency.name} - {competency.value || 50}
                         <Text fontWeight="900"></Text>
                       </FormLabel>
                     </Tooltip>
                     <Slider step={5} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
                       handleChangeSlider(value, i)
-                    }} defaultValue={competency.value || 0}>
+                    }} defaultValue={competency.value || 50}>
                       <SliderTrack>
                         <SliderFilledTrack />
                       </SliderTrack>
@@ -228,6 +268,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
                   <Textarea
                     borderRadius="md"
                     focusBorderColor={focusColor}
+                    value={competency.justification}
                     m="12px 0"
                     placeholder="Digite observações sobre a nota aqui , este campo é OPCIONAL"
                     size="sm"
@@ -242,7 +283,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
 
           </ModalBody>
           <ModalFooter>
-            <Button isLoading={isLoadedButton} onClick={() => handleSubmit()} colorScheme="green" >Salvar</Button>
+            <Button type="submit" isLoading={isLoadedButton} onClick={() => handleSubmit()} colorScheme="green" >Salvar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

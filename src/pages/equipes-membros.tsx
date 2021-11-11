@@ -83,12 +83,13 @@ export default function EquipesMembros(props) {
             assessmentId={location.state.assessmentId}
             key={member.id}
             name={member.name}
-            checked={members.evalueted}
+            checked={member.evalueted === 1}
             role={member.role}
             requestBody={{
               teamId: location.state.teamId,
               collaboratorId : member.id,
-              teamName: location.state.teamName
+              teamName: location.state.teamName,
+              evalueted: member.evalueted === 1
             }
             }
             handleClick={() => {
