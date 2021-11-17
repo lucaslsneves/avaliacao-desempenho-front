@@ -11,7 +11,7 @@ export default function HorizontalCard({
 } : any) {
   const textColor = useColorModeValue("white", "gray.600")
   return (
-    <HStack cursor="pointer"  maxWidth="800px" as="li" height="48" w="100%" borderRadius="lg" bg={useColorModeValue("white", "gray.700")} shadow="lg" >
+    <HStack cursor="pointer"  maxWidth="700px" as="li" height="48" w="100%" borderRadius="lg" bg={useColorModeValue("white", "gray.700")} shadow="lg" >
       <VStack
         spacing={5}
         borderTopLeftRadius="lg"

@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { Heading, HStack, VStack } from '@chakra-ui/layout';
-import { Box,Text, Button, Grid, IconButton, Skeleton, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Text, Button, Grid, IconButton, Skeleton, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../services/api';
@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom';
 import UserCard from '../components/user-card';
 import { VscGraph } from 'react-icons/vsc'
 import InputApp from '../components/input';
+import TableMembers from '../components/table-members';
 
 export default function EquipesMembros(props) {
   const [members, setMembers] = React.useState([])
@@ -51,6 +52,7 @@ export default function EquipesMembros(props) {
         setIsLoaded(false)
       }
     })
+
   }
 
 
@@ -81,44 +83,15 @@ export default function EquipesMembros(props) {
           <HStack display="inline-flex">
             <Button cursor="pointer" onClick={() => setIsTable(!isTable)} variant="outline" leftIcon={<VscGraph />} colorScheme="green">
               Avaliações
-          </Button>
+            </Button>
           </HStack>
         </HStack>
 
-        <Table minWidth="1000" marginTop="14" variant="simple">
-          <TableCaption>Imperial to metric conversion factors</TableCaption>
-          <Thead>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              <Td>inches</Td>
-              <Td>millimetres (mm)</Td>
-              <Td isNumeric>25.4</Td>
-            </Tr>
-            <Tr>
-              <Td>feet</Td>
-              <Td>centimetres (cm)</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr>
-              <Td>yards</Td>
-              <Td>metres (m)</Td>
-              <Td isNumeric>0.91444</Td>
-            </Tr>
-          </Tbody>
-          <Tfoot>
-            <Tr>
-              <Th>To convert</Th>
-              <Th>into</Th>
-              <Th isNumeric>multiply by</Th>
-            </Tr>
-          </Tfoot>
-        </Table>
+        <TableMembers assessmentId={location.state.assessmentId} requestBody={{
+          members,
+          teamId: location.state.teamId,
+          teamName: location.state.teamName
+        }} />
       </>
     )
   }
@@ -140,14 +113,14 @@ export default function EquipesMembros(props) {
   if (!isLoaded) {
     return (
       <>
-        <HStack min-width={"500px"} alignItems="center" justifyContent="space-between"  paddingX="16">
+        <HStack min-width={"500px"} alignItems="center" justifyContent="space-between" paddingX="16">
           <Heading size="lg" marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
           <VStack>
             <HStack spacing="5" display="inline-flex">
               <InputApp width="300px" onChange={onChangeSearch} placeholder="Buscar" />
               <Button cursor="pointer" onClick={() => setIsTable(!isTable)} variant="outline" leftIcon={<VscGraph />} colorScheme="green">
                 Relatórios
-          </Button>
+              </Button>
             </HStack>
             <HStack paddingTop="3" spacing="5">
               <Text >70 items</Text> <Button colorScheme="green">Voltar</Button> <Text>1</Text> <Button colorScheme="green">Avançar</Button>
@@ -155,21 +128,22 @@ export default function EquipesMembros(props) {
           </VStack>
         </HStack>
         <Grid mt="10" justifyItems="center" width="100%" templateColumns="repeat(4, 1fr)" gap={6}>
-          {members.map(member => <UserCard
-            assessmentId={location.state.assessmentId}
-            key={member.id}
-            name={member.name}
-            checked={member.evalueted === 1}
-            role={member.role}
-            requestBody={{
-              teamId: location.state.teamId,
-              collaboratorId: member.id,
-              teamName: location.state.teamName,
-              evalueted: member.evalueted === 1
-            }
-            }
+          {
+            members.map(member => <UserCard
+              assessmentId={location.state.assessmentId}
+              key={member.id}
+              name={member.name}
+              checked={member.evalueted === 1}
+              role={member.role}
+              requestBody={{
+                teamId: location.state.teamId,
+                collaboratorId: member.id,
+                teamName: location.state.teamName,
+                evalueted: member.evalueted === 1
+              }
+              }
 
-          />)}
+            />)}
         </Grid>
       </>
     )
