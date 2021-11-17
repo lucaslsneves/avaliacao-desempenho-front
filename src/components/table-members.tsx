@@ -32,6 +32,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
 
   const history = useHistory()
   const toast = useToast()
+  
   function handleChangeSlider(value: number, competencyIndex: number) {
     const newCompetencies = [...competencies];
     newCompetencies[competencyIndex].value = value
@@ -110,72 +111,6 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
       }
     })
   }, [])
-
-  function handleSubmit() {
-    const token = 'Bearer ' + localStorage.getItem('token')
-    setIsLoadedButton(true)
-    api.post(`/grades`, {
-
-      collaboratorId: requestBody.collaboratorId,
-      teamId: requestBody.teamId,
-      competencies
-    },
-      {
-        headers: {
-          Authorization: token
-        }
-      }
-
-    ).then((response) => {
-      toast({
-        title: "Sucesso!",
-        description: "As notas do colaborador foram enviadas!",
-        position: "top-right",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      })
-      
-        setIsLoadedButton(false)
-        history.push('/equipes/membros')
-        onClose()
-        history.push('/equipes/membros', {
-          teamId: requestBody.teamId,
-          teamName: requestBody.teamName,
-          assessmentId: assessmentId
-        })
-     
-    }).catch(e => {
-      if (e.response) {
-        if (e.response.status === 401) {
-          localStorage.setItem("token", "")
-          localStorage.setItem("isAuthenticated", 'false')
-          history.push('/')
-        } else {
-          toast({
-            title: "Erro ao avaliar!",
-            description: "Não foi possível avaliar este colaborador",
-            position: "top-right",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          })
-          setIsLoadedButton(false)
-          return;
-        }
-        toast({
-          title: "Erro ao avaliar!",
-          description: "Não foi possível avaliar este colaborador",
-          position: "top-right",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        })
-
-        setIsLoaded(false)
-      }
-    })
-  }
 
   
 
