@@ -27,6 +27,7 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
   const [error, setError] = React.useState(false)
   const [competencies, setCompetencies] = React.useState([])
   const [grades, setGrades] = React.useState([])
+  const [collaborators, setCollaborators] = React.useState([])
 
   const buttonBg = useColorModeValue('green.400', 'green.200')
   const colorBg = useColorModeValue('white', 'gray.800')
@@ -37,83 +38,93 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
 
 
   useEffect(() => {
-   
+
     const token = 'Bearer ' + localStorage.getItem('token')
     api.get(`/assessments/${assessmentId}/competencies`, {
       headers: {
         Authorization: token
       }
     }).then((response) => {
-        api.get(`/teams/members/grades/manager?team=2`, {
-          headers: {
-            Authorization: token
-          }
-        }).then(grades => {
-
-        
-       const reduceGrades =  grades.data.reduce(function (acc , current) {
-        if(!acc[current.collaborator_registration]){
-          acc[current.collaborator_registration].grades = [{
-            competency_name : current.competency_name,
-            justification: current.justification,
-            grade: current.grade
-          }]
-          acc[current.collaborator_registration].collaborator = {
-            name : current.collaborator_name,
-            role : current.collaborator_role,
-            registration : current.collaborator_registration
-          }
-        }else {
-          acc[current.collaborator_registration].grades.push({
-            competency_name : current.competency_name,
-            justification: current.justification,
-            grade: current.grade
-          })
+      api.get(`/teams/members/grades/manager?team=2`, {
+        headers: {
+          Authorization: token
         }
-        console.log(acc)
-        return acc
-        })
-         
-          setCompetencies(response.data)
-          setGrades(reduceGrades)
-          setIsLoaded(false)
-          setError(false)
-        }).catch(e => {
-          if (e.response) {
-            if (e.response.status === 401) {
-              localStorage.setItem("token", "")
-              localStorage.setItem("isAuthenticated", 'false')
-              history.push('/')
-            } else {
-              setError(true)
-              setIsLoaded(false)
-              return
-            }
-            setError(true)
-            setIsLoaded(false)
-          }
-        })
+      }).then(grades => {
+        const reduceGrades: any = {}
+        const reduceCollaborator: any = {}
+        const collabsArray = []
 
-        }).catch(e => {
-          if (e.response) {
-            if (e.response.status === 401) {
-              localStorage.setItem("token", "")
-              localStorage.setItem("isAuthenticated", 'false')
-              history.push('/')
-            } else {
-              setError(true)
-              setIsLoaded(false)
-              return
+        grades.data.forEach((grade , i) => {
+        
+          if (!reduceGrades[grade.collaborator_registration]) {
+            reduceGrades[grade.collaborator_registration] = [{
+              competency_name: grade.competency_name,
+              justification: grade.justification,
+              grade: grade.grade
+            }]
+            reduceCollaborator[grade.collaborator_registration] = {
+              name: grade.collaborator_name,
+              role: grade.collaborator_role,
+              registration: grade.collaborator_registration
             }
-            setError(true)
-            setIsLoaded(false)
+
+          } else {
+            reduceGrades[grade.collaborator_registration].push({
+              competency_name: grade.competency_name,
+              justification: grade.justification,
+              grade: grade.grade
+            })
+
           }
         })
+        
+        const arrayCollab = [];
+        for(let key in reduceGrades) {
+          arrayCollab.push({...reduceGrades[key] , ...reduceCollaborator[key]})
+        }
+        setIsLoaded(false)
+        setCompetencies(response.data)
+        setGrades(reduceGrades) 
+        setCollaborators(reduceCollaborator)
+        setIsLoaded(false)
+        setError(false)
+        
+      }).catch(e => {
+        if (e.response) {
+          if (e.response.status === 401) {
+            localStorage.setItem("token", "")
+            localStorage.setItem("isAuthenticated", 'false')
+            history.push('/')
+          } else {
+            setError(true)
+            setIsLoaded(false)
+            return
+          }
+          setError(true)
+          setIsLoaded(false)
+        }
+      })
+
+    }).catch(e => {
+      if (e.response) {
+        if (e.response.status === 401) {
+          localStorage.setItem("token", "")
+          localStorage.setItem("isAuthenticated", 'false')
+          history.push('/')
+        } else {
+          setError(true)
+          setIsLoaded(false)
+          return
+        }
+        setError(true)
+        setIsLoaded(false)
+      }
+    })
   }, [])
 
 
 
-  
+
 
   return (
     <>
@@ -121,21 +132,23 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
         <Thead>
           <Tr>
             <Th>Nome</Th>
+            <Th>Cargo</Th>
+            <Th>Chapa</Th>
             {
-              competencies.map(competency => (
-                <Th  key={`${competency.id}th`}>{competency.name}</Th>
+              competencies.map((competency: any) => (
+                <Th key={`${competency.id}th`}>{competency.name}</Th>
               ))
             }
           </Tr>
         </Thead>
         <Tbody>
-        {
-              competencies.map(competency => (
-                <Tr  key={`${competency.id}th`}>
-
-                </Tr>
-              ))
-            }
+          {
+            grades.map((competency : any) => (
+              <Tr key={`${competency.competency_name}td`}>
+               
+              </Tr>
+            ))
+          }
           <Tr>
             <Td >inches</Td>
             <Td >millimetres (mm)</Td>
