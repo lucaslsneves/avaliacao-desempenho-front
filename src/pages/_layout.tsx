@@ -45,9 +45,7 @@ interface LinkItemProps {
 const LinkItems: Array<LinkItemProps> = [
   { name: 'Minhas Avaliações', icon: FiHome },
   { name: 'Todas Avaliações', icon: FiTrendingUp },
-  { name: 'brtt', icon: FiCompass },
-  { name: 'rx1', icon: FiStar },
-  { name: 'rx', icon: FiSettings },
+  { name: 'Criar Avaliação', icon: FiTrendingUp },
 ];
 
 

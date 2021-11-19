@@ -85,6 +85,7 @@ export default function EquipesMembros(props) {
               Avaliações
             </Button>
           </HStack>
+          
         </HStack>
 
         <TableMembers assessmentId={location.state.assessmentId} requestBody={{
@@ -122,9 +123,7 @@ export default function EquipesMembros(props) {
                 Relatórios
               </Button>
             </HStack>
-            <HStack paddingTop="3" spacing="5">
-              <Text >70 items</Text> <Button colorScheme="green">Voltar</Button> <Text>1</Text> <Button colorScheme="green">Avançar</Button>
-            </HStack>
+          
           </VStack>
         </HStack>
         <Grid mt="10" justifyItems="center" width="100%" templateColumns="repeat(4, 1fr)" gap={6}>
