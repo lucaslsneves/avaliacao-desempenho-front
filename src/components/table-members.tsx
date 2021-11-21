@@ -1,27 +1,12 @@
-import { FormControl, FormLabel,HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure } from "@chakra-ui/react"
+import { HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Input, useColorModeValue } from "@chakra-ui/react"
 import React, { useEffect, useMemo } from "react"
 import {
-  Modal,
-  ModalOverlay,
-  ModalHeader,
-  ModalBody,
-  useColorModeValue,
-  ModalFooter,
-  Button,
-  ModalContent,
-  ModalCloseButton,
-  Textarea,
-  Text,
-  VStack,
-  Skeleton,
   useToast
 } from '@chakra-ui/react';
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
-import { reduce } from "lodash";
-import DataGrid from 'react-data-grid';
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
-import { useTable, useSortBy } from "react-table"
+import { useTable, useSortBy , useGlobalFilter } from "react-table"
 import { CSVLink } from "react-csv"
 
 export default function TableMembers({ title = "Modal", assessmentId = 0, requestBody = {teamId: 0} }) {
@@ -105,12 +90,20 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data }, useSortBy)
+    state,
+    setGlobalFilter
+  } = useTable({ columns, data } , useGlobalFilter, useSortBy)
+
+  const {globalFilter} = state
+
+  
+  const focusBorderColor = useColorModeValue("green.400", "green.200")
 
   return (
     <>
-    <HStack alignItems="center" justifyContent="flex-end" mt="4" pr="20">
-      <Box cursor="pointer"  borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
+    <HStack alignItems="center" justifyContent="space-between" mt="4" pr="16" pl="16">
+      <Input focusBorderColor={focusBorderColor} maxWidth="300px" placeHolder="Filtrar" value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)}></Input>
+      <Box w="172px" cursor="pointer" justifyContent="center"  borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
       <CSVLink  filename={"relatorio-avaliacao.csv"} data={data} headers={columns.map((column => ({key: column.accessor , label: column.Header})))}>
           Exportar Excel
       </CSVLink>
