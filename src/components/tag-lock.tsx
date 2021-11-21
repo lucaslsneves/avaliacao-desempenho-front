@@ -6,7 +6,7 @@ export function TagLock() {
   return (
     <Tag size={"sm"} variant="subtle" colorScheme="red">
       <TagLeftIcon boxSize="12px" as={FaLock} />
-      <TagLabel>Resultado Indisponível</TagLabel>
+      <TagLabel>Indisponível</TagLabel>
     </Tag>
   )
 }

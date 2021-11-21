@@ -13,7 +13,6 @@ import {
   InputGroup,
   InputRightElement,
   IconButton,
-
 } from '@chakra-ui/react'
 import { FaEyeSlash, FaEye } from "react-icons/fa"
 
@@ -23,7 +22,6 @@ import LoginLightImage from '../assets/login-image-light.svg'
 import { ColorModeSwitcher } from '../ColorModeSwitcher'
 import InputApp from '../components/input'
 import api from '../services/api'
-import { findDOMNode } from 'react-dom'
 import { useHistory } from 'react-router-dom'
 
 export default function Login() {

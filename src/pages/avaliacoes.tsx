@@ -5,9 +5,7 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import HorizontalCard from '../components/horizontal-card';
 import api from '../services/api';
-
-import { format } from 'date-fns'
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 export default function Avaliacoes(props) {
   const [assessments, setassessments] = React.useState([])

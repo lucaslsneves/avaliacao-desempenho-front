@@ -85,9 +85,7 @@ export default function EquipesMembros(props) {
               Avaliações
             </Button>
           </HStack>
-          
         </HStack>
-
         <TableMembers assessmentId={location.state.assessmentId} requestBody={{
           members,
           teamId: location.state.teamId,
