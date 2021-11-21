@@ -9,7 +9,8 @@ export default function TeamHorizontalCard({
   isAvailable = true,
   unity = "",
   role = "",
-  hierarchy = 0
+  hierarchy = 0,
+  buttonTitle = "Avalie sua equipe"
 }: any) {
   const textColor = useColorModeValue("white", "gray.600")
   return (
@@ -41,7 +42,7 @@ export default function TeamHorizontalCard({
             </Tag>)}
             
         </VStack>
-        <Button isDisabled={!isAvailable} onClick={handleClick} alignSelf="flex-end" colorScheme="green" rightIcon={<FaArrowRight />}>{hierarchy >= 1 ? "Avalie sua equipe" : "Acessar"}</Button>
+        <Button isDisabled={!isAvailable} onClick={handleClick} alignSelf="flex-end" colorScheme="green" rightIcon={<FaArrowRight />}>{buttonTitle}</Button>
       </VStack>
     </HStack>
   )

@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-comment-textnodes */
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { VStack, Heading } from '@chakra-ui/layout';
 import { Skeleton } from '@chakra-ui/react';
@@ -5,7 +6,7 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../services/api';
 
-import { useLocation} from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import TeamHorizontalCard from '../components/horizontal-card-team';
 
 export default function Equipes(props) {
@@ -26,9 +27,8 @@ export default function Equipes(props) {
       }
     }).then((response) => {
       setTimeout(() => {
-        setTeams(response.data.data)
+        setTeams(response.data)
         setIsLoaded(false)
-        console.log(response.data.data)
       }, 1000)
     }).catch(e => {
       if (e.response) {
@@ -48,7 +48,12 @@ export default function Equipes(props) {
 
 
 
-  if (!location.state?.assessmentId || !location.state?.assessmentGroupName) {
+  if (!location.state?.assessmentId || 
+    !location.state?.assessmentGroupName || 
+    location.state.availableToAnswer === null || 
+    location.state.availableToAnswer === undefined || 
+    location.state.availableToSee === null || 
+    location.state.availableToSee === undefined) {
     history.push('/')
 
     return <div></div>;
@@ -70,21 +75,78 @@ export default function Equipes(props) {
   }
 
   if (!isLoaded) {
+    if (teams.mananger) {
+      if (teams.manangers.length > 0) {
+        return (
+          // Gestor Avalia sua equipe
+          <VStack spacing={6}>
+            <Heading size="lg" marginTop={3} color={headingColor}> {`Equipes - ${location.state.assessmentGroupName}`}</Heading>
+            {teams.teams.map(team =>
+              <TeamHorizontalCard
+              isAvailable={location.state.availableToAnswer}
+                unity={team.unity}
+                role={'Avaliação dos seus Gestores'}
+                name={team.area} key={team.team_id}
+                hierarchy={team.hierarchy}
+                handleClick={() => {
+                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId })
+                }}
+              />)}
+
+            // Gestor ver notas dos seus gestores acima
+        
+            {teams.teams.map(team =>
+              <TeamHorizontalCard
+            isAvailable={location.state.availableToSee}
+              buttonTitle="Acessar"
+                unity={team.unity}
+                role={team.role}
+                name={team.area} key={team.team_id}
+                hierarchy={team.hierarchy}
+                handleClick={() => {
+                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId })
+                }}
+              />)}
+
+          </VStack>
+        )
+      } else {
+            // Gestor master avalia sua equipe
+       return ( 
+       <VStack spacing={6}>
+          <Heading size="lg" marginTop={3} color={headingColor}> {`Equipes - ${location.state.assessmentGroupName}`}</Heading>
+          {teams.teams.map(team =>
+            <TeamHorizontalCard
+            isAvailable={location.state.availableToAnswer}
+              unity={team.unity}
+              role={team.role}
+              name={team.area} key={team.team_id}
+              hierarchy={team.hierarchy}
+              handleClick={() => {
+                history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId })
+              }}
+            />)}
+        </VStack>
+       )
+      }
+    }
+    // Colaborador ver as notas dos seus gestores
     return (
       <VStack spacing={6}>
         <Heading size="lg" marginTop={3} color={headingColor}> {`Equipes - ${location.state.assessmentGroupName}`}</Heading>
-        {teams.map(team =>
+        {teams.teams.map(team =>
           <TeamHorizontalCard
+          isAvailable={location.state.availableToSee}
+            buttonTitle="Acessar"
             unity={team.unity}
             role={team.role}
             name={team.area} key={team.team_id}
             hierarchy={team.hierarchy}
             handleClick={() => {
-              history.push('/equipes/membros', { teamId: team.team_id , teamName: team.area , assessmentId: location.state.assessmentId })
+              history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId })
             }}
           />)}
       </VStack>
-
     )
   }
 

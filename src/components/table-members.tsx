@@ -24,7 +24,7 @@ import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy } from "react-table"
 import { CSVLink } from "react-csv"
 
-export default function TableMembers({ title = "Modal", assessmentId = 0, requestBody }) {
+export default function TableMembers({ title = "Modal", assessmentId = 0, requestBody = {teamId: 0} }) {
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [isLoadedButton, setIsLoadedButton] = React.useState(false)
   const [error, setError] = React.useState(false)
@@ -39,7 +39,7 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
 
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/teams/members/grades/manager?team=2`, {
+    api.get(`/teams/members/grades/manager?team=${requestBody?.teamId}`, {
       headers: {
         Authorization: token
       }
@@ -158,50 +158,5 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
     </>
   )
 
-  /**
-   * 
-   * 
-   * 
-   *  <>
-      <Table minWidth="1000" marginTop="14" variant="simple">
-        <Thead>
-          <Tr>
-            <Th>Nome</Th>
-            <Th>Cargo</Th>
-            <Th>Chapa</Th>
-            {
-              competencies.map((competency: any) => (
-                <Th key={`${competency.id}th`}>{competency.name}</Th>
-              ))
-            }
-          </Tr>
-        </Thead>
-        <Tbody>
-          {
-            grades.map((competency : any) => (
-              <Tr key={`${competency.competency_name}td`}>
-               
-              </Tr>
-            ))
-          }
-          <Tr>
-            <Td >inches</Td>
-            <Td >millimetres (mm)</Td>
-            <Td >25.4</Td>
-          </Tr>
-          <Tr>
-            <Td>feet</Td>
-            <Td>centimetres (cm)</Td>
-            <Td >30.48</Td>
-          </Tr>
-          <Tr>
-            <Td>yards</Td>
-            <Td>metres (m)</Td>
-            <Td >0.91444</Td>
-          </Tr>
-        </Tbody>
-      </Table>
-    </>
-   */
 }
 
