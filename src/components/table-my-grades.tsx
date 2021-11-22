@@ -1,4 +1,4 @@
-import { HStack,Text, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Heading } from "@chakra-ui/react"
+import { HStack, Text,Skeleton, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Heading, Grid, VStack } from "@chakra-ui/react"
 import React, { useEffect, useMemo } from "react"
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
@@ -12,6 +12,9 @@ export default function TableMyGrades({ teamId = 0 }) {
   const [error, setError] = React.useState(false)
   const [grades, setGrades] = React.useState([])
 
+  const [averages, setAverages] = React.useState([])
+  const [overall, setOverall] = React.useState(0)
+
   const history = useHistory()
 
   useEffect(() => {
@@ -20,8 +23,17 @@ export default function TableMyGrades({ teamId = 0 }) {
       headers: {
         Authorization: token
       }
-    }).then(grades => {
-      setGrades(grades.data)
+    }).then(response => {
+      let overall = 0;
+
+      response.data.averages.forEach(average => overall += average.average)
+
+      if(response.data.averages.length !== 0)
+      overall = overall / response.data.averages.length
+      
+      setOverall(overall)
+      setAverages(response.data.averages)
+      setGrades(response.data.grades)
       setError(false)
       setIsLoaded(false)
     }).catch(e => {
@@ -72,6 +84,7 @@ export default function TableMyGrades({ teamId = 0 }) {
 
   const data = useMemo(() => [...grades], [grades])
 
+
   const {
     getTableProps,
     getTableBodyProps,
@@ -80,20 +93,52 @@ export default function TableMyGrades({ teamId = 0 }) {
     prepareRow,
   } = useTable({ columns, data }, useSortBy)
 
-  if(error) {
+  if (isLoaded) {
+    return (
+      <VStack alignItems="center" w="100%" spacing={6}>
+        <Skeleton height="28px" width={"25%"} borderRadius="lg" />
+        <Skeleton height="48" width="100%" maxWidth="800px" borderRadius="lg" />
+        <Skeleton height="48" width="100%" maxWidth="800px" borderRadius="lg" />
+      </VStack>
+    )
+  }
+
+  if (error) {
     return <Text>Ops, erro inesperado! table-my-grades</Text>
   }
   return (
     <>
-    <HStack alignItems="center" justifyContent="space-between" mt="4" pr="20">
-      <Heading>{`${grades[0]?.collaborator_name} - ${grades[0]?.collaborator_role}`}</Heading>
-      <Box cursor="pointer"  borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
-      <CSVLink  filename={"relatorio-avaliacao.csv"} data={data} headers={columns.map((column => ({key: column.accessor , label: column.Header})))}>
-          Exportar Excel
+      <HStack alignItems="center" justifyContent="space-between" mt="4" pr="20">
+        <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name} - ${grades[0]?.collaborator_role}`}</Heading>
+        <Box cursor="pointer" borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
+          <CSVLink filename={"relatorio-avaliacao.csv"} data={data} headers={columns.map((column => ({ key: column.accessor, label: column.Header })))}>
+            Exportar Excel
       </CSVLink>
-      </Box>
+        </Box>
       </HStack>
-      <Table mt="16" {...getTableProps()}>
+      <Heading fontWeight="500" textAlign="center" mt="10">Médias</Heading>
+      <Grid mt="6" justifyItems="center" width="100%" templateColumns="repeat(3, 1fr)" gap={4}>
+        <VStack spacing="3" >
+            <Text fontSize="lg" fontWeight="500">
+              Média Geral
+            </Text>
+            <Text fontSize="lg" fontWeight="700">
+              {overall}
+            </Text>
+        </VStack>
+        {averages.map(average => (
+           <VStack spacing="3" >
+           <Text fontSize="lg" fontWeight="500">
+             {average.name}
+           </Text>
+           <Text fontSize="lg" fontWeight="700">
+             {average.average}
+           </Text>
+       </VStack>
+        ))}
+      </Grid>
+      <Heading fontWeight="500" textAlign="center" mt="10">Notas</Heading>
+      <Table mt="6" {...getTableProps()}>
         <Thead>
           {headerGroups.map((headerGroup) => (
             <Tr {...headerGroup.getHeaderGroupProps()}>
