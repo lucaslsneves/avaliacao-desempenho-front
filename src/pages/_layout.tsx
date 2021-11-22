@@ -32,6 +32,8 @@ import {
   FiBell,
   FiChevronDown,
 } from 'react-icons/fi';
+import {Link as LinkRouter} from 'react-router-dom'
+
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
@@ -40,22 +42,17 @@ import { useHistory } from 'react-router';
 interface LinkItemProps {
   name: string;
   icon: IconType;
+  onClick: Function
 }
-let LinkItems: Array<LinkItemProps> = [
-  { name: 'Minhas Avaliações', icon: FiHome },
- 
-];
 
-if(localStorage.getItem('role') === 'admin') {
-  LinkItems = [...LinkItems ,  { name: 'Todas Avaliações', icon: FiTrendingUp },
-  { name: 'Criar Avaliação', icon: FiTrendingUp }]
-}
 export default function Layout({
   children,
 }: {
   children: ReactNode;
 }) {
 
+ 
+  
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -90,6 +87,24 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+  const history = useHistory()
+
+  let LinkItems: Array<LinkItemProps> = [
+    { name: 'Minhas Avaliações', icon: FiHome, onClick: () => {
+      history.push('/dashboard')
+    } },
+   
+  ];
+  
+  if(localStorage.getItem('role') === 'admin') {
+    LinkItems = [...LinkItems ,  { name: 'Todas Avaliações', icon: FiTrendingUp , onClick: () => {
+      history.push('/todas-avaliacoes')
+    } },
+    { name: 'Criar Avaliação', icon: FiTrendingUp , onClick: () => {
+      history.push('/dashboard')
+    } }]
+  }
+
   return (
     <Box
     
@@ -107,7 +122,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
+        <NavItem onClick={link.onClick} key={link.name} icon={link.icon}>
           {link.name}
         </NavItem>
       ))}

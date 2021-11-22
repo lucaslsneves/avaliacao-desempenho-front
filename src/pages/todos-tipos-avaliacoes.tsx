@@ -7,7 +7,7 @@ import HorizontalCard from '../components/horizontal-card';
 import api from '../services/api';
 import { useLocation } from 'react-router-dom';
 
-export default function Avaliacoes(props) {
+export default function TodosTiposAvaliacoes(props) {
   const [assessments, setassessments] = React.useState([])
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
@@ -47,7 +47,7 @@ export default function Avaliacoes(props) {
 
 
   if(!location.state?.id || !location.state?.assessmentGroupName){
-    history.push('/')
+    history.push('/todas-avaliacoes')
     
     return <div></div>;
   }
@@ -77,7 +77,7 @@ export default function Avaliacoes(props) {
           subHeader="Tipo de avaliação"
           name={`${assessment.type}°`} key={assessment.id}
           handleClick={() => {
-            history.push('/equipes' , {
+            history.push('/todas-equipes' , {
               assessmentId: assessment.id , 
               assessmentGroupName : location.state.assessmentGroupName , 
               assessmentGroupId: location.state.id , 

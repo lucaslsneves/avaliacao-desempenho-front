@@ -3,7 +3,7 @@ import React from 'react'
 
 export default function InputApp({ 
   maxLength= "" ,
-  onChange ,
+  onChange = () => {} ,
   placeholder = "", 
   isRequired = true , 
   type = "text",

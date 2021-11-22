@@ -1,33 +1,34 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { VStack, Heading } from '@chakra-ui/layout';
 import { Skeleton } from '@chakra-ui/react';
+import format from 'date-fns/format';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import HorizontalCard from '../components/horizontal-card';
 import api from '../services/api';
-import { useLocation } from 'react-router-dom';
 
-export default function Avaliacoes(props) {
-  const [assessments, setassessments] = React.useState([])
+
+export default function TodasAvaliacoes(props) {
+  const [assessmentsGroups, setAssessmentsGroups] = React.useState([])
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
 
   const history = useHistory()
-  const location = useLocation();
 
   const headingColor = useColorModeValue('gray.700', 'white');
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/logged-in-user/assessments-groups/assessments/${location.state?.id}`, {
+    api.get('/assessments-groups', {
       headers: {
         Authorization: token
       }
     }).then((response) => {
       setTimeout(() => {
-        setassessments(response.data.data)
+        setAssessmentsGroups(response.data.data)
         setIsLoaded(false)
         console.log(response.data.data)
       }, 1000)
+
     }).catch(e => {
       if (e.response) {
         if (e.response.status === 401) {
@@ -43,14 +44,6 @@ export default function Avaliacoes(props) {
       setIsLoaded(false)
     })
   }, [])
-
-
-
-  if(!location.state?.id || !location.state?.assessmentGroupName){
-    history.push('/')
-    
-    return <div></div>;
-  }
 
 
   if (error) {
@@ -70,24 +63,17 @@ export default function Avaliacoes(props) {
   if (!isLoaded) {
     return (
       <VStack spacing={6}>
-        <Heading size="lg" marginTop={3} color={headingColor}> {`Avaliação de Desempenho - ${location.state.assessmentGroupName}`}</Heading>
-        {assessments.map(assessment => 
+        <Heading color={headingColor}>Todas Avaliações</Heading>
+        {assessmentsGroups.map(assessmentGroup => 
         <HorizontalCard 
-          description={assessment.name} 
-          subHeader="Tipo de avaliação"
-          name={`${assessment.type}°`} key={assessment.id}
+          endDate={format(new Date(assessmentGroup.end_date), 'dd/MM/yyyy')} 
+          startDate={format(new Date(assessmentGroup.start_date), 'dd/MM/yyyy')} 
+          name={assessmentGroup.name} key={assessmentGroup.assessment_group_id}
           handleClick={() => {
-            history.push('/equipes' , {
-              assessmentId: assessment.id , 
-              assessmentGroupName : location.state.assessmentGroupName , 
-              assessmentGroupId: location.state.id , 
-              availableToAnswer: assessment.available_to_answer,
-              availableToSee: assessment.available_to_see
-             })
+            history.push(`/todos-tipos-avaliacoes` , {assessmentGroupName: assessmentGroup.name , id: assessmentGroup.id})
           }}
         />)}
       </VStack>
-
     )
   }
 
