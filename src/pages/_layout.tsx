@@ -36,19 +36,20 @@ import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { useHistory } from 'react-router';
-import { getParseTreeNode } from 'typescript';
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
 }
-const LinkItems: Array<LinkItemProps> = [
+let LinkItems: Array<LinkItemProps> = [
   { name: 'Minhas Avaliações', icon: FiHome },
-  { name: 'Todas Avaliações', icon: FiTrendingUp },
-  { name: 'Criar Avaliação', icon: FiTrendingUp },
+ 
 ];
 
-
+if(localStorage.getItem('role') === 'admin') {
+  LinkItems = [...LinkItems ,  { name: 'Todas Avaliações', icon: FiTrendingUp },
+  { name: 'Criar Avaliação', icon: FiTrendingUp }]
+}
 export default function Layout({
   children,
 }: {
@@ -202,9 +203,15 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
-                  <Text fontSize="sm">Lucas Luz</Text>
+      
+                  <Text fontSize="sm">{
+                  localStorage.getItem("user_name") || 'Usuário'
+                  }</Text>
+                  
                   <Text fontSize="xs" color="gray.600">
-                    Admin
+                    {
+                  localStorage.getItem("role") === 'user' ? "Usuário" : "Admin"
+                    }
                   </Text>
                 </VStack>
                 <Box display={{ base: 'none', md: 'flex' }}>

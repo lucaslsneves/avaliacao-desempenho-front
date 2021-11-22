@@ -47,6 +47,7 @@ export default function Login() {
         localStorage.setItem("isAuthenticated", 'true');
         localStorage.setItem("token" , response.data.token.token)
         localStorage.setItem("role" , response.data.user.role)
+        localStorage.setItem("user_name" , response.data.user.name)
         setError('')
         history.push('/dashboard')
       } else {
