@@ -101,7 +101,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       history.push('/todas-avaliacoes')
     } },
     { name: 'Criar Avaliação', icon: FiTrendingUp , onClick: () => {
-      history.push('/dashboard')
+      history.push('/criar-avaliacao')
     } }]
   }
 

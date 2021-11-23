@@ -14,6 +14,8 @@ import MinhasNotas from '../pages/minhas-notas';
 import TodasAvaliacoes from '../pages/todas-avaliacoes';
 import TodosTiposAvaliacoes from '../pages/todos-tipos-avaliacoes';
 import TodasEquipes from '../pages/todas-equipes';
+import TodasNotas from '../pages/todas-notas';
+import CriarAvaliacao from '../pages/criar-avaliacao';
 
 
 export default function Routes() {
@@ -28,6 +30,8 @@ export default function Routes() {
       <Route path="/todas-avaliacoes" exact component={TodasAvaliacoes} isPrivate />
       <Route path="/todos-tipos-avaliacoes" exact component={TodosTiposAvaliacoes} isPrivate />
       <Route path="/todas-equipes" exact component={TodasEquipes} isPrivate />
+      <Route path="/todas-notas" exact component={TodasNotas} isPrivate />
+      <Route path="/criar-avaliacao" exact component={CriarAvaliacao} isPrivate />
       
       <Route2 path="*" exact component={Page404}  />
     </Switch>

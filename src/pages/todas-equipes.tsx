@@ -46,9 +46,6 @@ export default function TodasEquipes(props) {
         })
     }, [])
 
-    
-
-
 
     if (!location.state?.assessmentId ||
         !location.state?.assessmentGroupName) {
@@ -70,9 +67,6 @@ export default function TodasEquipes(props) {
             </VStack>
         )
     }
-
-
-
     return (
         <VStack spacing={6}>
             <Heading size="lg" marginTop={3} color={headingColor}> {`Todas Equipes - ${location.state?.assessmentGroupName}`}</Heading>
@@ -85,7 +79,7 @@ export default function TodasEquipes(props) {
                     unity={team.unity}
                     unityNumber={team.unity_number}
                     handleClick={() => {
-                        history.push('/minhas-notas', { teamId: team.id })
+                        history.push('/todas-notas', { teamId: team.id , teamArea: team.area , teamUnity: team.unity})
                     }}
                 />)}
         </VStack>
