@@ -108,12 +108,10 @@ const toast = useToast()
       console.log(e)
       if (e.response) {
         const data = e.response.data
-        if (e.response.status === 400) {
-          if (data.rule === 'required') {
-            setError(`O campo ${data.field === 'password' ? 'Senha' : data.field.toUpperCase()} é obrigatório`)
-          } else if (data.rule === 'invalid credentials') {
-            setError(`Campo ${data.field === 'password' ? 'Senha' : data.field.toUpperCase()} inválido`)
-          }
+        if (e.response.status === 401) {
+          localStorage.setItem("token", "")
+          localStorage.setItem("isAuthenticated", 'false')
+          history.push('/')
         } else {
           setError('Erro inesperado, tente novamente em alguns minutos!')
         }

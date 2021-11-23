@@ -102,7 +102,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     } },
     { name: 'Criar Avaliação', icon: FiTrendingUp , onClick: () => {
       history.push('/criar-avaliacao')
-    } }]
+    } },
+    { name: 'Criar Competência', icon: FiTrendingUp , onClick: () => {
+      history.push('/criar-competencia')
+    } }
+  ]
   }
 
   return (
