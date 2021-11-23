@@ -66,6 +66,10 @@ export default function TodasAvaliacoes(props) {
         <Heading color={headingColor}>Todas Avaliações</Heading>
         {assessmentsGroups.map(assessmentGroup => 
         <HorizontalCard 
+          admin={true}
+          assessmentId={assessmentGroup.assessment_id}
+          availableToSee={assessmentGroup.available_to_see}
+          availableToAnswer={assessmentGroup.available_to_answer}
           endDate={format(new Date(assessmentGroup.end_date), 'dd/MM/yyyy')} 
           startDate={format(new Date(assessmentGroup.start_date), 'dd/MM/yyyy')} 
           name={assessmentGroup.name} key={assessmentGroup.assessment_group_id}

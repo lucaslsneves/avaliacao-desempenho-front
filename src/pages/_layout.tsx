@@ -32,6 +32,9 @@ import {
   FiBell,
   FiChevronDown,
 } from 'react-icons/fi';
+
+import { MdAdd } from 'react-icons/md'
+
 import {Link as LinkRouter} from 'react-router-dom'
 
 import { IconType } from 'react-icons';
@@ -100,10 +103,10 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     LinkItems = [...LinkItems ,  { name: 'Todas Avaliações', icon: FiTrendingUp , onClick: () => {
       history.push('/todas-avaliacoes')
     } },
-    { name: 'Criar Avaliação', icon: FiTrendingUp , onClick: () => {
+    { name: 'Criar Avaliação', icon: MdAdd , onClick: () => {
       history.push('/criar-avaliacao')
     } },
-    { name: 'Criar Competência', icon: FiTrendingUp , onClick: () => {
+    { name: 'Criar Competência', icon: MdAdd , onClick: () => {
       history.push('/criar-competencia')
     } }
   ]

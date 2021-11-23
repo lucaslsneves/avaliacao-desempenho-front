@@ -109,7 +109,7 @@ export default function TableMyGrades({ teamId = 0 }) {
   return (
     <>
       <HStack alignItems="center" justifyContent="space-between" mt="4" pr="20">
-        <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name} - ${grades[0]?.collaborator_role}`}</Heading>
+        <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name || ""} - ${grades[0]?.collaborator_role || ""}`}</Heading>
         <Box cursor="pointer" borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
           <CSVLink filename={"relatorio-avaliacao.csv"} data={data} headers={columns.map((column => ({ key: column.accessor, label: column.Header })))}>
             Exportar Excel

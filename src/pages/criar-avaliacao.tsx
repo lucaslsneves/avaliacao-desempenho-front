@@ -178,11 +178,11 @@ const toast = useToast()
 
 
           <FormControl isRequired>
-            <FormLabel>Descrição</FormLabel>
+            <FormLabel fontWeight="500">Descrição</FormLabel>
             <InputApp onChange={onChangeDescription} placeholder="Descrição da avaliação" />
           </FormControl>
 
-          <Text mr="auto">Competências</Text>
+          <Heading fontSize="md" fontWeight="500" marginRight="auto">Competências</Heading>
           <Box width="100%">
             <Select
               isMulti
