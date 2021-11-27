@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { Heading, HStack, VStack } from '@chakra-ui/layout';
-import { Box, Text, Button, Grid, IconButton, Skeleton, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Text, Button, Grid, IconButton, Skeleton, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr, SimpleGrid } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../services/api';
@@ -112,19 +112,19 @@ export default function EquipesMembros(props) {
   if (!isLoaded) {
     return (
       <>
-        <HStack min-width={"500px"} alignItems="center" justifyContent="space-between" paddingX="16">
-          <Heading size="lg" marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
+        <HStack flexDirection={{ base: 'column', md: 'column', lg: 'row' }} min-width={"500px"} alignItems="center" justifyContent="space-between" paddingX="16" >
+          <Heading fontSize={{ base: '22px', md: '26px', lg: '33px' }} marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
           <VStack>
-            <HStack spacing="5" display="inline-flex">
+            <HStack mt="5" spacing="5" display="inline-flex">
               <InputApp width="300px" onChange={onChangeSearch} placeholder="Buscar" />
               <Button cursor="pointer" onClick={() => setIsTable(!isTable)} variant="outline" leftIcon={<VscGraph />} colorScheme="green">
                 Relatórios
               </Button>
             </HStack>
-          
+
           </VStack>
         </HStack>
-        <Grid mt="10" justifyItems="center" width="100%" templateColumns="repeat(4, 1fr)" gap={6}>
+        <SimpleGrid mt="10" justifyItems="center" width="100%" minChildWidth="270px" gap={10}>
           {
             members.map(member => <UserCard
               assessmentId={location.state.assessmentId}
@@ -138,10 +138,15 @@ export default function EquipesMembros(props) {
                 teamName: location.state.teamName,
                 evalueted: member.evalueted === 1
               }
+
               }
 
+
             />)}
-        </Grid>
+          
+
+
+        </SimpleGrid>
       </>
     )
   }

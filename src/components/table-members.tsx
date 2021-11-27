@@ -1,5 +1,6 @@
 import { HStack,VStack,Skeleton, Table, Heading, Text,Box,Grid, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Input, useColorModeValue } from "@chakra-ui/react"
 import React, { useEffect, useMemo } from "react"
+
 import {
   useToast
 } from '@chakra-ui/react';
@@ -153,7 +154,7 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
        </VStack>
         ))}
       </Grid>
-      <Heading fontWeight="500" textAlign="center" mt="10">Notas</Heading>,
+      <Heading fontWeight="500" textAlign="center" mt="10">Minhas Avaliacões</Heading>,
       <HStack justifyContent="center">
 
       <Input focusBorderColor={focusBorderColor} maxWidth="300px" placeHolder="Filtrar" value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)}></Input>
