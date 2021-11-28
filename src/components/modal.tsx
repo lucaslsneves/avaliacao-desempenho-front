@@ -25,7 +25,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
   const [isLoadedButton, setIsLoadedButton] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [competencies, setCompetencies] = React.useState([])
-
+  console.log(requestBody)
   const focusColor = useColorModeValue('green.400', 'green.200')
   const buttonBg = useColorModeValue('green.400', 'green.200')
   const colorBg = useColorModeValue('white', 'gray.800')
@@ -35,14 +35,12 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
   function handleChangeSlider(value: number, competencyIndex: number) {
     const newCompetencies = [...competencies];
     newCompetencies[competencyIndex].value = value
-    console.log(newCompetencies)
     setCompetencies(newCompetencies)
   }
 
   function handleOnChangeTextArea(value: string, competencyIndex: number) {
     const newCompetencies = [...competencies];
     newCompetencies[competencyIndex].justification = value
-    console.log(newCompetencies)
     setCompetencies(newCompetencies)
   }
 

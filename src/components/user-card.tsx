@@ -18,6 +18,7 @@ import React from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { MdFileDownload } from 'react-icons/md'
 import MyModal from './modal';
+import  ModalCollaboratorPDF from './modal-collaborator-pdf';
 
 export default function UserCard({
   requestBody = {},
@@ -53,16 +54,7 @@ export default function UserCard({
               <TagLeftIcon boxSize="12px" as={FaCheck} />
               <TagLabel fontSize="md">Avaliado</TagLabel>
             </Tag>
-            <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
-            <IconButton
-            disabled={!availableToSee}
-            onClick={() => console.log('oi')}
-              colorScheme="green"
-              aria-label="Baixar PDF"
-              icon={<MdFileDownload />}
-              size="sm"
-            />
-            </Tooltip>
+            <ModalCollaboratorPDF requestBody={requestBody} />
           </HStack>
         )}
       </Box>

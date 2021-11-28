@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Tooltip, useDisclosure } from "@chakra-ui/react"
+import { FormControl, FormLabel, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Tooltip, useDisclosure } from "@chakra-ui/react"
 import React, { useEffect } from "react"
 import {
   Modal,
@@ -11,24 +11,47 @@ import {
   ModalContent,
   ModalCloseButton,
   Textarea,
+  Box,
   Text,
   VStack,
   Skeleton,
-  useToast
+  useToast,
+  IconButton,
+  Tag,
+  TagLabel
 } from '@chakra-ui/react';
+import { MdFileDownload } from 'react-icons/md'
+import { Radar } from 'react-chartjs-2';
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
 
-export default function ModalCollaboratorPDF({ title = "Modal", assessmentId = 0, requestBody }) {
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip as Tooltip2,
+  Legend,
+} from 'chart.js';
+
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip2,
+  Legend
+);
+
+export default function ModalCollaboratorPDF({ title = "Relatório Individual", assessmentId = 0, requestBody, availableToSee = true }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isLoaded, setIsLoaded] = React.useState(true)
+  const [isLoading, setIsLoading] = React.useState(true)
   const [isLoadedButton, setIsLoadedButton] = React.useState(false)
   const [error, setError] = React.useState(false)
-  const [competencies, setCompetencies] = React.useState([])
+  const [grades, setGrades] = React.useState({})
 
   const focusColor = useColorModeValue('green.400', 'green.200')
-  const buttonBg = useColorModeValue('green.400', 'green.200')
-  const colorBg = useColorModeValue('white', 'gray.800')
 
   const history = useHistory()
   const toast = useToast()
@@ -46,73 +69,21 @@ export default function ModalCollaboratorPDF({ title = "Modal", assessmentId = 0
     setCompetencies(newCompetencies)
   }
 
-  /*
-
-  useEffect(() => {
+  function handleOpen() {
+    setIsLoading(true)
+    onOpen()
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/assessments/${assessmentId}/competencies`, {
+    api.get(`/grades/member-pdf?member=${requestBody.collaboratorId}&team=${requestBody.teamId}`, {
       headers: {
         Authorization: token
       }
-    }).then((response) => {
-      if(requestBody.evalueted) {
-        api.get(`/teams/members/grades?team=${requestBody.teamId}&member=${requestBody.collaboratorId}`, {
-          headers: {
-            Authorization: token
-          }
-        }).then((grades) => {
-          const gradesMap: any = {}
-          grades.data.forEach((grade : any) => {
-            gradesMap[grade.competency_id] = {value: grade.grade , justification: grade.justification}
-          }) 
-
-          
-          setCompetencies(response.data.map((competency : any) => {
-              competency.value = gradesMap[competency.competency_id].value
-              competency.justification = gradesMap[competency.competency_id].justification
-              return competency
-          }))
-         
-          setIsLoaded(false)
-        }).catch(e => {
-          if (e.response) {
-            if (e.response.status === 401) {
-              localStorage.setItem("token", "")
-              localStorage.setItem("isAuthenticated", 'false')
-              history.push('/')
-            } else {
-              setError(true)
-              setIsLoaded(false)
-              return
-            }
-            setError(true)
-            setIsLoaded(false)
-          }
-        })
-      }else {
-        setTimeout(() => {
-          setCompetencies(response.data)
-          setIsLoaded(false)
-        }, 1000)
-      }
-     
+    }).then(({ data }) => {
+      setGrades(data)
+      setIsLoading(false)
     }).catch(e => {
-      if (e.response) {
-        if (e.response.status === 401) {
-          localStorage.setItem("token", "")
-          localStorage.setItem("isAuthenticated", 'false')
-          history.push('/')
-        } else {
-          setError(true)
-          setIsLoaded(false)
-          return
-        }
-        setError(true)
-        setIsLoaded(false)
-      }
+      console.log(e)
     })
-  }, [])
-*/
+  }
 
   function handleSubmit() {
     const token = 'Bearer ' + localStorage.getItem('token')
@@ -138,16 +109,16 @@ export default function ModalCollaboratorPDF({ title = "Modal", assessmentId = 0
         duration: 5000,
         isClosable: true,
       })
-      
-        setIsLoadedButton(false)
-        history.push('/equipes/membros')
-        onClose()
-        history.push('/equipes/membros', {
-          teamId: requestBody.teamId,
-          teamName: requestBody.teamName,
-          assessmentId: assessmentId
-        })
-     
+
+      setIsLoadedButton(false)
+      history.push('/equipes/membros')
+      onClose()
+      history.push('/equipes/membros', {
+        teamId: requestBody.teamId,
+        teamName: requestBody.teamName,
+        assessmentId: assessmentId
+      })
+
     }).catch(e => {
       if (e.response) {
         if (e.response.status === 401) {
@@ -180,46 +151,41 @@ export default function ModalCollaboratorPDF({ title = "Modal", assessmentId = 0
     })
   }
 
-  
 
-  if (isLoaded) {
+
+  if (isLoading) {
     return (
       <>
-        <Button padding="12px 0"
-          w={'full'}
-          mt={"auto"}
-          bg={buttonBg}
-          color={colorBg}
-          rounded={'md'}
-          _hover={{
-            transform: 'translateY(-2px)',
-            boxShadow: 'lg',
-          }} onClick={onOpen}>
-          Avaliar
-      </Button>
-        <Modal scrollBehavior={"inside"} size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
+        <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
+          <IconButton
+            disabled={!availableToSee}
+            onClick={handleOpen}
+            colorScheme="green"
+            aria-label="Baixar PDF"
+            icon={<MdFileDownload />}
+            size="sm"
+          />
+        </Tooltip>
+        <Modal size="6xl" scrollBehavior={"inside"} onClose={onClose} isOpen={isOpen} isCentered>
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent padding="4">
             <ModalHeader>{title}</ModalHeader>
             <ModalCloseButton />
             <ModalBody as="form">
               <VStack alignItems="start" w="100%" spacing={6}>
-                <Skeleton height="28px" width={"25%"} borderRadius="md" />
-                <Skeleton height="28px" width="100%" maxWidth="800px" borderRadius="md" />
-                <Skeleton height="56px" width="100%" maxWidth="800px" borderRadius="md" />
+                <Skeleton height="28px" width={"30%"} borderRadius="md" />
+                <Skeleton height="28px" width="100%" borderRadius="md" />
+                <Skeleton height="56px" width="100%" borderRadius="md" />
 
 
-                <Skeleton height="28px" width={"25%"} borderRadius="md" />
-                <Skeleton height="28px" width="100%" maxWidth="800px" borderRadius="md" />
-                <Skeleton height="56px" width="100%" maxWidth="800px" borderRadius="md" />
+                <Skeleton height="28px" width={"30%"} borderRadius="md" />
+                <Skeleton height="28px" width="100%" borderRadius="md" />
+                <Skeleton height="56px" width="100%" borderRadius="md" />
 
 
               </VStack>
 
             </ModalBody>
-            <ModalFooter>
-              <Button colorScheme="green" onClick={onClose}>Salvar</Button>
-            </ModalFooter>
           </ModalContent>
         </Modal>
       </>
@@ -228,65 +194,56 @@ export default function ModalCollaboratorPDF({ title = "Modal", assessmentId = 0
 
     )
   }
-
   return (
     <>
-      <Button padding="12px 0"
-        w={'full'}
-        mt={"auto"}
-        bg={buttonBg}
-        color={colorBg}
-        rounded={'md'}
-        _hover={{
-          transform: 'translateY(-2px)',
-          boxShadow: 'lg',
-        }} onClick={onOpen}>
-        Avaliar
-      </Button>
-      <Modal as="form" scrollBehavior={"inside"} size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
+      <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
+        <IconButton
+          disabled={!availableToSee}
+          onClick={handleOpen}
+          colorScheme="green"
+          aria-label="Baixar PDF"
+          icon={<MdFileDownload />}
+          size="sm"
+        />
+      </Tooltip>
+      <Modal size="6xl" scrollBehavior={"inside"} size="6xl" onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{title}</ModalHeader>
+          <ModalHeader paddingX="10" display="flex" justifyContent="space-between">{title}
+            <Button type="submit" isLoading={isLoadedButton} onClick={() => handleSubmit()} colorScheme="green" >Gerar</Button>
+
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody >
-            {competencies.map((competency, i) => {
+              <HStack justifyContent="space-between" mb="5" alignItems="center">
+                <VStack alignItems="flex-start">
+                    <HStack><Text fontWeight="700">Avaliado: </Text><Text fontWeight="500">{grades.user.name}</Text></HStack>
+                    <HStack><Text fontWeight="700">Cargo: </Text><Text>{grades.collaborator.role}</Text></HStack>
+                    <HStack><Text fontWeight="700">Setor: </Text><Text>{`${grades.team.unity} - ${grades.team.area}`}</Text></HStack>
+                </VStack>
+                <Tag colorScheme="green" size="lg">
+                  <TagLabel display="flex" >Resultado Final: <Text ml="2" fontWeight="700"> 100%</Text></TagLabel>
+                </Tag>
+              </HStack>
+              <Box margin="0 auto" height="600px" width="600px" >
+                {
+                  <Radar  data={{
 
-              return (
-                <>
-                  <FormControl key={competency.id}>
-                    <Tooltip label={competency.description} placement="top-start">
-                      <FormLabel cursor="pointer">{competency.name} - {competency.value || 50}
-                        <Text fontWeight="900"></Text>
-                      </FormLabel>
-                    </Tooltip>
-                    <Slider step={5} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
-                      handleChangeSlider(value, i)
-                    }} defaultValue={competency.value || 50}>
-                      <SliderTrack>
-                        <SliderFilledTrack />
-                      </SliderTrack>
-                      <SliderThumb />
-                    </Slider>
-                  </FormControl>
-                  <Textarea
-                    borderRadius="md"
-                    focusBorderColor={focusColor}
-                    value={competency.justification}
-                    m="12px 0"
-                    placeholder="Digite observações sobre a nota aqui , este campo é OPCIONAL"
-                    size="sm"
-                    resize={"none"}
-                    onChange={(e) => {
-                      handleOnChangeTextArea(e.target.value, i)
-                    }}
-                  />
-                </>
-              )
-            })}
-
+                    labels: [...grades.averages.map((grade) => grade.name), ...grades.averages.map((grade) => grade.name)], datasets: [
+                      {
+                        label: 'Notas',
+                        data: [95,96,100,100],
+                        backgroundColor: 'transparent',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 3,
+                      },
+                    ],
+                  }} />
+                }
+              </Box>
+          
           </ModalBody>
           <ModalFooter>
-            <Button type="submit" isLoading={isLoadedButton} onClick={() => handleSubmit()} colorScheme="green" >Salvar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
