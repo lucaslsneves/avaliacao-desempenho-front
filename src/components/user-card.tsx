@@ -18,7 +18,7 @@ import React from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { MdFileDownload } from 'react-icons/md'
 import MyModal from './modal';
-import  ModalCollaboratorPDF from './modal-collaborator-pdf';
+import ModalCollaboratorPDF from './modal-collaborator-pdf';
 
 export default function UserCard({
   requestBody = {},
@@ -30,6 +30,11 @@ export default function UserCard({
   assessmentId = 0
 }) {
   const iconColor = useColorModeValue("white", "gray.800");
+
+  async function generatePdf() {
+    setButtonIsLoading(true)
+  }
+  const [buttonIsLoading , setButtonIsLoading] = React.useState(false)
   return (
     <Box
       height="400px"
@@ -42,7 +47,7 @@ export default function UserCard({
       <Box
         h={'120px'}
         w={'full'}
-       
+
         justifyContent="space-between"
         padding="3"
         paddingBottom="0"
@@ -54,7 +59,16 @@ export default function UserCard({
               <TagLeftIcon boxSize="12px" as={FaCheck} />
               <TagLabel fontSize="md">Avaliado</TagLabel>
             </Tag>
-            <ModalCollaboratorPDF requestBody={requestBody} />
+            <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
+              <IconButton
+               isLoading={buttonIsLoading}
+                onClick={generatePdf}
+                colorScheme="green"
+                aria-label="Baixar PDF"
+                icon={<MdFileDownload />}
+                size="sm"
+              />
+            </Tooltip>
           </HStack>
         )}
       </Box>

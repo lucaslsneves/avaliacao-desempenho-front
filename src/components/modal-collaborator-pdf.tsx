@@ -11,6 +11,7 @@ import {
   ModalContent,
   ModalCloseButton,
   Textarea,
+  Heading,
   Box,
   Text,
   VStack,
@@ -24,7 +25,8 @@ import { MdFileDownload } from 'react-icons/md'
 import { Radar } from 'react-chartjs-2';
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
-
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -34,6 +36,8 @@ import {
   Tooltip as Tooltip2,
   Legend,
 } from 'chart.js';
+import { Page, Text as TextPDF, View, Document, StyleSheet } from '@react-pdf/renderer';
+import ReactPDF from '@react-pdf/renderer';
 
 ChartJS.register(
   RadialLinearScale,
@@ -86,69 +90,36 @@ export default function ModalCollaboratorPDF({ title = "Relatório Individual", 
   }
 
   function handleSubmit() {
-    const token = 'Bearer ' + localStorage.getItem('token')
-    setIsLoadedButton(true)
-    api.post(`/grades`, {
 
-      collaboratorId: requestBody.collaboratorId,
-      teamId: requestBody.teamId,
-      competencies
-    },
-      {
-        headers: {
-          Authorization: token
-        }
-      }
+    html2canvas(document.querySelector("#capture")).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg');
 
-    ).then((response) => {
-      toast({
-        title: "Sucesso!",
-        description: "As notas do colaborador foram enviadas!",
-        position: "top-right",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      })
+      const pdf = new jsPDF("portrait", "px", "a4");
+      pdf.addImage(imgData, 'jpeg', 0, 0);
+      pdf.save("download.pdf");
 
-      setIsLoadedButton(false)
-      history.push('/equipes/membros')
-      onClose()
-      history.push('/equipes/membros', {
-        teamId: requestBody.teamId,
-        teamName: requestBody.teamName,
-        assessmentId: assessmentId
-      })
+    });
 
-    }).catch(e => {
-      if (e.response) {
-        if (e.response.status === 401) {
-          localStorage.setItem("token", "")
-          localStorage.setItem("isAuthenticated", 'false')
-          history.push('/')
-        } else {
-          toast({
-            title: "Erro ao avaliar!",
-            description: "Não foi possível avaliar este colaborador",
-            position: "top-right",
-            status: "error",
-            duration: 5000,
-            isClosable: true,
-          })
-          setIsLoadedButton(false)
-          return;
-        }
-        toast({
-          title: "Erro ao avaliar!",
-          description: "Não foi possível avaliar este colaborador",
-          position: "top-right",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        })
+    html2canvas(document.querySelector("#capture")).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg');
 
-        setIsLoaded(false)
-      }
-    })
+      const pdf = new jsPDF("portrait", "px", "a4");
+      pdf.addImage(imgData, 'jpeg', 0, 0);
+      pdf.save("download.pdf");
+
+    });
+
+    html2canvas(document.querySelector("#capture")).then(canvas => {
+      const imgData = canvas.toDataURL('image/jpeg');
+
+      const pdf = new jsPDF("portrait", "px", "a4");
+      pdf.addImage(imgData, 'jpeg', 0, 0);
+
+
+      pdf.save("download.pdf");
+
+    });
+
   }
 
 
@@ -206,42 +177,46 @@ export default function ModalCollaboratorPDF({ title = "Relatório Individual", 
           size="sm"
         />
       </Tooltip>
-      <Modal size="6xl" scrollBehavior={"inside"} size="6xl" onClose={onClose} isOpen={isOpen} isCentered>
+      <Modal size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader paddingX="10" display="flex" justifyContent="space-between">{title}
-            <Button type="submit" isLoading={isLoadedButton} onClick={() => handleSubmit()} colorScheme="green" >Gerar</Button>
+            <Button type="submit" isLoading={isLoadedButton} onClick={handleSubmit} colorScheme="green" >Gerar</Button>
 
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody >
+          <ModalBody maxWidth="800px" paddingY="5" id="capture" >
+            <Page size="A4">
               <HStack justifyContent="space-between" mb="5" alignItems="center">
-                <VStack alignItems="flex-start">
-                    <HStack><Text fontWeight="700">Avaliado: </Text><Text fontWeight="500">{grades.user.name}</Text></HStack>
-                    <HStack><Text fontWeight="700">Cargo: </Text><Text>{grades.collaborator.role}</Text></HStack>
-                    <HStack><Text fontWeight="700">Setor: </Text><Text>{`${grades.team.unity} - ${grades.team.area}`}</Text></HStack>
+                <VStack fontSize="sm" alignItems="flex-start">
+                  <Heading mb="5" fontSize="lg">Relatório Avaliação de Desempenho</Heading>
+                  <HStack ><Text fontWeight="700">Avaliado: </Text><Text fontWeight="500">{grades.user.name}</Text></HStack>
+                  <HStack><Text fontWeight="700">Cargo: </Text><Text>{grades.collaborator.role}</Text></HStack>
+                  <HStack><Text fontWeight="700">Setor: </Text><Text>{`${grades.team.unity} - ${grades.team.area}`}</Text></HStack>
                 </VStack>
-                <Tag colorScheme="green" size="lg">
-                  <TagLabel display="flex" >Resultado Final: <Text ml="2" fontWeight="700"> 100%</Text></TagLabel>
+                <Tag padding="2" colorScheme="green" size="lg">
+                  <Text pb="4">Resultado Final</Text>
                 </Tag>
               </HStack>
               <Box margin="0 auto" height="600px" width="600px" >
                 {
-                  <Radar  data={{
+
+                  <Radar data={{
 
                     labels: [...grades.averages.map((grade) => grade.name), ...grades.averages.map((grade) => grade.name)], datasets: [
                       {
                         label: 'Notas',
-                        data: [95,96,100,100],
+                        data: [95, 96, 100, 100],
                         backgroundColor: 'transparent',
                         borderColor: 'rgba(255, 99, 132, 1)',
                         borderWidth: 3,
                       },
                     ],
                   }} />
+
                 }
               </Box>
-          
+            </Page>
           </ModalBody>
           <ModalFooter>
           </ModalFooter>
