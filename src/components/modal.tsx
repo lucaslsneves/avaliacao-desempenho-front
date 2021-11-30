@@ -257,11 +257,12 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
               return (
                 <>
                   <FormControl key={competency.id}>
-                    <Tooltip label={competency.description} placement="top-start">
-                      <FormLabel cursor="pointer">{competency.name} - 
-                        <Text ml="2" display="inline-block" fontWeight="600">{competency.value || 0}%</Text>
+                  
+                      <FormLabel fontWeight={600} cursor="pointer">{competency.name} - 
+                        <Text ml="2" display="inline-block" fontWeight="700">{competency.value || 0}%</Text>
                       </FormLabel>
-                    </Tooltip>
+                      <Text>{competency.description}</Text>
+
                     <Slider step={5} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
                       handleChangeSlider(value, i)
                     }} defaultValue={competency.value || 0}>
