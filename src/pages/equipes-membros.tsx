@@ -8,6 +8,8 @@ import { debounce } from 'lodash'
 import { useLocation } from 'react-router-dom';
 import UserCard from '../components/user-card';
 import { VscGraph } from 'react-icons/vsc'
+import { MdArrowBack,MdArrowForward } from 'react-icons/md'
+
 import InputApp from '../components/input';
 import TableMembers from '../components/table-members';
 
@@ -16,7 +18,7 @@ export default function EquipesMembros(props) {
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
   const [search, setSearch] = React.useState("");
-
+  const [pagination, setPagination] = React.useState({})
   const [isTable, setIsTable] = React.useState(false)
 
   const history = useHistory()
@@ -24,18 +26,20 @@ export default function EquipesMembros(props) {
 
   const onChangeSearch = debounce(async (e) => {
     loadMembers(e.target.value, 0)
+    setSearch(e.target.value)
   }, 800)
 
 
-  function loadMembers(filter = '', timeout = 1000) {
+  function loadMembers(filter = '', timeout = 1000 , page = 1) {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/logged-in-user/assessments/teams/members/${location.state?.teamId}?filter=${filter}`, {
+    api.get(`/logged-in-user/assessments/teams/members/${location.state?.teamId}?filter=${filter}&page=${page}`, {
       headers: {
         Authorization: token
       }
     }).then((response) => {
       setTimeout(() => {
         setMembers(response.data.newCollaborates)
+        setPagination(response.data.collaborates.meta)
         setIsLoaded(false)
       }, timeout)
     }).catch(e => {
@@ -121,7 +125,13 @@ export default function EquipesMembros(props) {
                 Relatórios
               </Button>
             </HStack>
-
+            <HStack paddingTop="4">
+              <Button onClick={() => loadMembers(search , 0 , pagination.current_page - 1)} 
+              disabled={pagination.current_page === 1} colorScheme="green" leftIcon={<MdArrowBack/>}>Voltar</Button>
+              <Text>{`${pagination.current_page} de ${pagination.last_page}`}</Text>
+              <Button onClick={() => loadMembers(search , 0 , pagination.current_page + 1)} 
+              disabled={pagination.current_page === pagination.last_page} colorScheme="green" rightIcon={<MdArrowForward/>}>Avançar</Button>
+            </HStack>
           </VStack>
         </HStack>
         <SimpleGrid mt="10" justifyItems="center" width="100%" minChildWidth="270px" gap={10}>

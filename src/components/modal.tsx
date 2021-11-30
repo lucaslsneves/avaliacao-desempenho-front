@@ -19,13 +19,13 @@ import {
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
 
-export default function MyModal({ title = "Modal", assessmentId = 0, requestBody }) {
+export default function MyModal({ title = "Modal", assessmentId = 0, requestBody, availableToSee = false }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [isLoadedButton, setIsLoadedButton] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [competencies, setCompetencies] = React.useState([])
-  console.log(requestBody)
+  const [average, setAverage] = React.useState(0)
   const focusColor = useColorModeValue('green.400', 'green.200')
   const buttonBg = useColorModeValue('green.400', 'green.200')
   const colorBg = useColorModeValue('white', 'gray.800')
@@ -35,6 +35,9 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
   function handleChangeSlider(value: number, competencyIndex: number) {
     const newCompetencies = [...competencies];
     newCompetencies[competencyIndex].value = value
+    let sum = 0;
+    newCompetencies.forEach(competency => sum += competency?.value || 0)
+    setAverage(sum / newCompetencies.length)
     setCompetencies(newCompetencies)
   }
 
@@ -62,12 +65,16 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
             gradesMap[grade.competency_id] = {value: grade.grade , justification: grade.justification}
           }) 
 
-          
-          setCompetencies(response.data.map((competency : any) => {
-              competency.value = gradesMap[competency.competency_id].value
-              competency.justification = gradesMap[competency.competency_id].justification
-              return competency
-          }))
+          let newCompetencies = response.data.map((competency : any) => {
+            competency.value = gradesMap[competency.competency_id].value
+            competency.justification = gradesMap[competency.competency_id].justification
+            return competency
+        })
+          let sum = 0;
+          newCompetencies.forEach(competency => sum += competency?.value || 0)
+          setAverage(sum / newCompetencies.length)
+
+          setCompetencies(newCompetencies)
          
           setIsLoaded(false)
         }).catch(e => {
@@ -140,7 +147,8 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
         history.push('/equipes/membros', {
           teamId: requestBody.teamId,
           teamName: requestBody.teamName,
-          assessmentId: assessmentId
+          assessmentId: assessmentId,
+          availableToSee
         })
      
     }).catch(e => {
@@ -250,13 +258,13 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
                 <>
                   <FormControl key={competency.id}>
                     <Tooltip label={competency.description} placement="top-start">
-                      <FormLabel cursor="pointer">{competency.name} - {competency.value || 50}
-                        <Text fontWeight="900"></Text>
+                      <FormLabel cursor="pointer">{competency.name} - 
+                        <Text ml="2" display="inline-block" fontWeight="600">{competency.value || 0}%</Text>
                       </FormLabel>
                     </Tooltip>
                     <Slider step={5} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
                       handleChangeSlider(value, i)
-                    }} defaultValue={competency.value || 50}>
+                    }} defaultValue={competency.value || 0}>
                       <SliderTrack>
                         <SliderFilledTrack />
                       </SliderTrack>
@@ -280,7 +288,8 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
             })}
 
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter display="flex" justifyContent="space-between">
+            <Text fontWeight={700}>Média: {average.toFixed(1)}%</Text>
             <Button type="submit" isLoading={isLoadedButton} onClick={() => handleSubmit()} colorScheme="green" >Salvar</Button>
           </ModalFooter>
         </ModalContent>

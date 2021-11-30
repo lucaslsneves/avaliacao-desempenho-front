@@ -127,7 +127,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
               Média Geral
             </Text>
             <Text fontSize="lg" fontWeight="700">
-              {overall}
+              {overall?.toFixed(1)}%
             </Text>
         </VStack>
         {averages.map(average => (
@@ -136,7 +136,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
              {average.name}
            </Text>
            <Text fontSize="lg" fontWeight="700">
-             {average.average}
+             {average.average?.toFixed(1) || "0.0" } %
            </Text>
        </VStack>
         ))}

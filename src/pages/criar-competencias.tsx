@@ -119,6 +119,8 @@ export default function CriarCompetencia() {
       setDisabled(true)
     }
   }
+  const focusBorderColor = useColorModeValue("green.400", "green.200")
+
 
   return (
     <>
@@ -138,7 +140,7 @@ export default function CriarCompetencia() {
 
           <FormControl isRequired>
             <FormLabel>Descrição</FormLabel>
-            <Textarea maxLength={255}  onChange={onChangeDescription} placeholder="Descrição da competência" />
+            <Textarea maxLength={255} focusBorderColor={focusBorderColor}  onChange={onChangeDescription} placeholder="Descrição da competência" />
           </FormControl>
 
           {error && <Text fontSize={"17"} fontWeight={500} color={colorErrorText} alignSelf="start">{error}</Text>}

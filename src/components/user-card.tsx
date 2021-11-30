@@ -109,7 +109,7 @@ export default function UserCard({
           </Heading>
           <Text color={'gray.500'}>{role}</Text>
         </Stack>
-        <MyModal requestBody={requestBody} title={`${name} | ${role}`} assessmentId={assessmentId} />
+        <MyModal availableToSee={availableToSee} requestBody={requestBody} title={`${name} | ${role}`} assessmentId={assessmentId} />
       </VStack>
     </Box>
   );
