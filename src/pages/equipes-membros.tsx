@@ -64,7 +64,7 @@ export default function EquipesMembros(props) {
 
 
 
-  if (!location.state?.teamId || !location.state?.teamName) {
+  if (!location.state?.teamId || !location.state?.teamName || location.state.availableToSee === undefined || location.state.availableToSee === null) {
     history.push('/')
 
     return <div></div>;
@@ -132,6 +132,7 @@ export default function EquipesMembros(props) {
               name={member.name}
               checked={member.evalueted === 1}
               role={member.role}
+              availableToSee={location.state.availableToSee}
               requestBody={{
                 teamId: location.state.teamId,
                 collaboratorId: member.id,

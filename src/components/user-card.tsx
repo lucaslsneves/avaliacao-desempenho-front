@@ -19,7 +19,6 @@ import { FaCheck } from 'react-icons/fa'
 import { MdFileDownload } from 'react-icons/md'
 import api from '../services/api';
 import MyModal from './modal';
-import ModalCollaboratorPDF from './modal-collaborator-pdf';
 
 export default function UserCard({
   requestBody = {},
@@ -35,25 +34,31 @@ export default function UserCard({
   async function generatePdf() {
     setButtonIsLoading(true)
     try {
-     const response = await api.get(`http://192.168.10.191:3333/grades/member-pdf?team=${requestBody.teamId}&member=${requestBody.collaboratorId}` , {responseType: 'blob' })
-    const file = new Blob(
-      [response.data], 
-      {type: 'application/pdf'});
-    const fileURL = URL.createObjectURL(file);
-    window.open(fileURL);
-    
-      
+      const token = 'Bearer ' + localStorage.getItem('token')
+      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${requestBody.teamId}&member=${requestBody.collaboratorId}`
+        ,
+        {
+          responseType: 'blob', headers: {
+            Authorization: token
+          }
+        })
+      const file = new Blob(
+        [response.data],
+        { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
+
+
       setButtonIsLoading(false)
-    }catch(e) {
+    } catch (e) {
       setButtonIsLoading(false)
     }
   }
-  const [buttonIsLoading , setButtonIsLoading] = React.useState(false)
+  const [buttonIsLoading, setButtonIsLoading] = React.useState(false)
   return (
     <Box
       height="400px"
-
-      w="16em"
+      w="14em"
       bg={useColorModeValue('white', 'gray.800')}
       boxShadow={'2xl'}
       rounded={'md'}
@@ -75,7 +80,8 @@ export default function UserCard({
             </Tag>
             <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
               <IconButton
-               isLoading={buttonIsLoading}
+              disabled={!availableToSee}
+                isLoading={buttonIsLoading}
                 onClick={generatePdf}
                 colorScheme="green"
                 aria-label="Baixar PDF"

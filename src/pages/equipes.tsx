@@ -89,7 +89,7 @@ export default function Equipes(props) {
                 name={'Avalie sua equipe'} key={team.team_id}
                 hierarchy={team.hierarchy}
                 handleClick={() => {
-                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId })
+                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId,  availableToSee: location.state.availableToSee })
                 }}
               />)}
 
@@ -123,7 +123,7 @@ export default function Equipes(props) {
                 name={'Avalie sua equipe'} key={team.team_id}
                 hierarchy={team.hierarchy}
                 handleClick={() => {
-                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId })
+                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId , availableToSee: location.state.availableToSee })
                 }}
               />)}
           </VStack>

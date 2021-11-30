@@ -16,6 +16,7 @@ import {
   Box,
   toast,
   useToast,
+  Textarea,
 } from '@chakra-ui/react'
 import { FaEyeSlash, FaEye } from "react-icons/fa"
 import pt from 'date-fns/locale/pt';
@@ -137,7 +138,7 @@ export default function CriarCompetencia() {
 
           <FormControl isRequired>
             <FormLabel>Descrição</FormLabel>
-            <InputApp onChange={onChangeDescription} placeholder="Nome da descrição" />
+            <Textarea maxLength={255}  onChange={onChangeDescription} placeholder="Descrição da competência" />
           </FormControl>
 
           {error && <Text fontSize={"17"} fontWeight={500} color={colorErrorText} alignSelf="start">{error}</Text>}

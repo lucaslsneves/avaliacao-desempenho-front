@@ -1,21 +1,19 @@
-import { HStack, Text, Skeleton, Button, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Heading, Grid, VStack } from "@chakra-ui/react"
+import { HStack, Text,Skeleton, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Heading, Grid, VStack } from "@chakra-ui/react"
 import React, { useEffect, useMemo } from "react"
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy } from "react-table"
 import { CSVLink } from "react-csv"
-import { MdFileDownload } from 'react-icons/md'
 
 export default function TableMyGrades({ teamId = 0 }) {
   const [isLoaded, setIsLoaded] = React.useState(true)
-  const [buttonIsLoading, setButtonIsLoading] = React.useState(false)
+  const [isLoadedButton, setIsLoadedButton] = React.useState(false)
   const [error, setError] = React.useState(false)
   const [grades, setGrades] = React.useState([])
 
   const [averages, setAverages] = React.useState([])
   const [overall, setOverall] = React.useState(0)
-  const [memberId, setMemberId] = React.useState(0)
 
   const history = useHistory()
 
@@ -30,12 +28,11 @@ export default function TableMyGrades({ teamId = 0 }) {
 
       response.data.averages.forEach(average => overall += average.average)
 
-      if (response.data.averages.length !== 0)
-        overall = overall / response.data.averages.length
-
+      if(response.data.averages.length !== 0)
+      overall = overall / response.data.averages.length
+      
       setOverall(overall)
       setAverages(response.data.averages)
-      setMemberId(response.data.memberId)
       setGrades(response.data.grades)
       setError(false)
       setIsLoaded(false)
@@ -57,32 +54,6 @@ export default function TableMyGrades({ teamId = 0 }) {
 
 
   }, [])
-
-  async function generatePdf() {
-    setButtonIsLoading(true)
-    try {
-      const token = 'Bearer ' + localStorage.getItem('token')
-      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${teamId}&member=${memberId}`
-        ,
-        {
-          responseType: 'blob', headers: {
-            Authorization: token
-          }
-        })
-        console.log('oi')
-      const file = new Blob(
-        [response.data],
-        { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      window.open(fileURL);
-
-
-      setButtonIsLoading(false)
-    } catch (e) {
-      console.log(e)
-      setButtonIsLoading(false)
-    }
-  }
 
   const columns = useMemo(() => [
     {
@@ -139,31 +110,73 @@ export default function TableMyGrades({ teamId = 0 }) {
     <>
       <HStack alignItems="center" justifyContent="space-between" mt="4" pr="20">
         <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name || ""} - ${grades[0]?.collaborator_role || ""}`}</Heading>
-        <Button onClick={generatePdf} isLoading={buttonIsLoading} rightIcon={<MdFileDownload />} colorScheme='green'>
-          Gerar PDF
-  </Button>
+        <Box cursor="pointer" borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
+          <CSVLink filename={"relatorio-avaliacao.csv"} data={data} headers={columns.map((column => ({ key: column.accessor, label: column.Header })))}>
+            Exportar Excel
+      </CSVLink>
+        </Box>
       </HStack>
       <Heading fontWeight="500" textAlign="center" mt="10">Médias</Heading>
       <Grid mt="6" justifyItems="center" width="100%" templateColumns="repeat(3, 1fr)" gap={8}>
         <VStack spacing="3" >
-          <Text fontSize="lg" fontWeight="500">
-            Média Geral
+            <Text fontSize="lg" fontWeight="500">
+              Média Geral
             </Text>
-          <Text fontSize="lg" fontWeight="700">
-            {overall?.toFixed(1)}%
+            <Text fontSize="lg" fontWeight="700">
+              {overall?.toFixed(1)}%
             </Text>
         </VStack>
         {averages.map(average => (
-          <VStack spacing="3" >
-            <Text fontSize="lg" fontWeight="500">
-              {average.name}
-            </Text>
-            <Text fontSize="lg" fontWeight="700">
-              {average.average?.toFixed(1)}%
+           <VStack spacing="3" >
+           <Text fontSize="lg" fontWeight="500">
+             {average.name}
            </Text>
-          </VStack>
+           <Text fontSize="lg" fontWeight="700">
+             {average.average?.toFixed(1)}%
+           </Text>
+       </VStack>
         ))}
       </Grid>
+      <Heading fontWeight="500" textAlign="center" mt="10">Notas</Heading>
+      <Table mt="6" {...getTableProps()}>
+        <Thead>
+          {headerGroups.map((headerGroup) => (
+            <Tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <Th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  isNumeric={column.isNumeric}
+                >
+                  {column.render("Header")}
+                  <Box pl="4">
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <TriangleDownIcon aria-label="sorted descending" />
+                      ) : (
+                        <TriangleUpIcon aria-label="sorted ascending" />
+                      )
+                    ) : null}
+                  </Box>
+                </Th>
+              ))}
+            </Tr>
+          ))}
+        </Thead>
+        <Tbody {...getTableBodyProps()}>
+          {rows.map((row) => {
+            prepareRow(row)
+            return (
+              <Tr {...row.getRowProps()}>
+                {row.cells.map((cell) => (
+                  <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
+                    {cell.render("Cell")}
+                  </Td>
+                ))}
+              </Tr>
+            )
+          })}
+        </Tbody>
+      </Table>
     </>
   )
 

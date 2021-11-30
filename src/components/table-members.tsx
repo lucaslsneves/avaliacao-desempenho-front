@@ -134,13 +134,13 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
       </Box>
       </HStack>
       <Heading fontWeight="500" textAlign="center" mt="10">Médias</Heading>
-      <Grid mt="6" justifyItems="center" width="100%" templateColumns="repeat(3, 1fr)" gap={4}>
+      <Grid mt="6" justifyItems="center" width="100%" templateColumns="repeat(3, 1fr)" gap={8}>
         <VStack spacing="3" >
             <Text fontSize="lg" fontWeight="500">
               Média Geral
             </Text>
             <Text fontSize="lg" fontWeight="700">
-              {overall}
+              {overall?.toFixed(1)}%
             </Text>
         </VStack>
         {averages.map(average => (
@@ -149,7 +149,7 @@ export default function TableMembers({ title = "Modal", assessmentId = 0, reques
              {average.name}
            </Text>
            <Text fontSize="lg" fontWeight="700">
-             {average.average}
+             {average.average?.toFixed(1)}%
            </Text>
        </VStack>
         ))}

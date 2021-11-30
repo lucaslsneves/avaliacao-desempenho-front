@@ -42,6 +42,7 @@ export default function CriarAvaliacao() {
   const [startDate, setStartDate] = React.useState(new Date());
   const [endDate, setEndDate] = React.useState(new Date());
   const [competencies, setCompetencies] = React.useState([]);
+  const [competenciesManager, setCompetenciesManager] = React.useState([]);
   const [options, setOptions] = React.useState([]);
 
 
@@ -77,6 +78,10 @@ const toast = useToast()
         formData.append('competencies[]', competencies[i].value);
       }
 
+      for (var i = 0; i < competenciesManager.length; i++) {
+        formData.append('competenciesManager[]', competenciesManager[i].value);
+      }
+
       console.log(formData)
 
       const token = 'Bearer ' + localStorage.getItem('token')
@@ -105,8 +110,7 @@ const toast = useToast()
         setError('Erro inesperado, tente novamente em alguns minutos!')
       }
     } catch (e) {
-      console.log(e)
-      if (e.response) {
+        if (e.response) {
         const data = e.response.data
         if (e.response.status === 401) {
           localStorage.setItem("token", "")
@@ -128,7 +132,6 @@ const toast = useToast()
 
   function onChangeMembers(e: any) {
     setMembers(e.target.files[0]);
-    console.log(e.target.files[0])
     if (e.target.value && name !== "" && description !== "") {
       setDisabled(false)
     } else {
@@ -182,7 +185,7 @@ const toast = useToast()
             <InputApp onChange={onChangeDescription} placeholder="Descrição da avaliação" />
           </FormControl>
 
-          <Heading fontSize="md" fontWeight="500" marginRight="auto">Competências</Heading>
+          <Heading fontSize="md" fontWeight="500" width="100%">Competências</Heading>
           <Box width="100%">
             <Select
               isMulti
@@ -192,6 +195,19 @@ const toast = useToast()
               placeholder="Selecione as competências"
               onChange={(e) => {
                 setCompetencies(e)
+              }}
+            />
+          </Box>
+          <Heading fontSize="md" fontWeight="500" width="100%">Competências Gestor</Heading>
+          <Box width="100%">
+            <Select
+              isMulti
+              value={competenciesManager}
+              key={competenciesManager.length}
+              options={options}
+              placeholder="Selecione as competências"
+              onChange={(e) => {
+                setCompetenciesManager(e)
               }}
             />
           </Box>

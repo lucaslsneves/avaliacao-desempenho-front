@@ -46,7 +46,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
 
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/assessments/${assessmentId}/competencies`, {
+    api.get(`/assessments/${assessmentId}/competencies?collaborator=${requestBody.collaboratorId}`, {
       headers: {
         Authorization: token
       }
