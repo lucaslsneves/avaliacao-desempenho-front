@@ -1,4 +1,4 @@
-import { HStack, Text,Skeleton, Table, Input, Box, Tbody, Td, Th, Thead, Tooltip, Tr,useColorModeValue, useDisclosure, Heading, Grid, VStack } from "@chakra-ui/react"
+import { HStack, Text,Skeleton, Table, Input, Box, Tbody, Td, Th, Thead, Tooltip, Tr,useColorModeValue, useDisclosure, Heading, Grid, VStack, IconButton } from "@chakra-ui/react"
 import React, { useEffect, useMemo } from "react"
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
@@ -6,11 +6,14 @@ import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useGlobalFilter } from "react-table"
 import { CSVLink } from "react-csv"
 
+import { MdFileDownload } from 'react-icons/md'
+
 export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamUnity="Unidade"}) {
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
+  const [buttonIsLoading, setButtonIsLoading] = React.useState(false)
   const [grades, setGrades] = React.useState([])
-
+  
   const [averages, setAverages] = React.useState([])
   const [overall, setOverall] = React.useState(0)
 
@@ -78,8 +81,35 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
       Header: "Justificativa",
       accessor: "justification",
     },
+    {
+      Header: "Relatório",
+      accessor: "pdf",
+    },
   ], [])
 
+  async function generatePdf(teamId,collaboratorId) {
+    setButtonIsLoading(true)
+    try {
+      const token = 'Bearer ' + localStorage.getItem('token')
+      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${teamId}&member=${collaboratorId}`
+        ,
+        {
+          responseType: 'blob', headers: {
+            Authorization: token
+          }
+        })
+      const file = new Blob(
+        [response.data],
+        { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      window.open(fileURL);
+
+
+      setButtonIsLoading(false)
+    } catch (e) {
+      setButtonIsLoading(false)
+    }
+  }
   const data = useMemo(() => [...grades], [grades])
 
 
@@ -174,11 +204,22 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
             prepareRow(row)
             return (
               <Tr {...row.getRowProps()}>
-                {row.cells.map((cell) => (
-                  <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
-                    {cell.render("Cell")}
-                  </Td>
-                ))}
+                {row.cells.map((cell) => {
+                  return (
+                    <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
+                      {cell.column.Header === "Relatório" ? <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
+              <IconButton
+                isLoading={buttonIsLoading}
+                onClick={() => generatePdf(cell.row.original.team_id,cell.row.original.collaborator_id)}
+                colorScheme="green"
+                aria-label="Baixar PDF"
+                icon={<MdFileDownload />}
+                size="sm"
+              />
+            </Tooltip> : cell.render("Cell")}
+                    </Td>
+                  )
+                })}
               </Tr>
             )
           })}
