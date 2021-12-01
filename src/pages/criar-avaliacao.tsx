@@ -57,8 +57,20 @@ const toast = useToast()
         Authorization: token
       }
     }).then(({ data }) => {
-      console.log([...data.map(competency => ({ label: competency.name, value: competency.id }))])
       setOptions([...data.map(competency => ({ label: competency.name, value: competency.id }))])
+    }).catch((e) => {
+      if (e.response) {
+        const data = e.response.data
+        if (e.response.status === 401) {
+          localStorage.setItem("token", "")
+          localStorage.setItem("isAuthenticated", 'false')
+          history.push('/')
+        } else {
+          setError('Erro inesperado, tente novamente em alguns minutos!')
+        }
+      } else {
+        setError('Erro inesperado, tente novamente em alguns minutos!')
+      }
     })
   }, [])
 
@@ -176,13 +188,13 @@ const toast = useToast()
 
           <FormControl isRequired>
             <FormLabel>Nome</FormLabel>
-            <InputApp onChange={onChangeName} placeholder="Nome da avaliação" />
+            <InputApp value={name} onChange={onChangeName} placeholder="Nome da avaliação" />
           </FormControl>
 
 
           <FormControl isRequired>
             <FormLabel fontWeight="500">Descrição</FormLabel>
-            <InputApp onChange={onChangeDescription} placeholder="Descrição da avaliação" />
+            <InputApp value={description} onChange={onChangeDescription} placeholder="Descrição da avaliação" />
           </FormControl>
 
           <Heading fontSize="md" fontWeight="500" width="100%">Competências</Heading>

@@ -77,7 +77,8 @@ export default function CriarCompetencia() {
           isClosable: true,
         })
         setLoading(false)
-        history.push('/todas-avaliacoes')
+        setName("")
+        setDescription("")
       } else {
         setError('Erro inesperado, tente novamente em alguns minutos!')
       }
@@ -140,7 +141,7 @@ export default function CriarCompetencia() {
 
           <FormControl isRequired>
             <FormLabel>Descrição</FormLabel>
-            <Textarea maxLength={255} focusBorderColor={focusBorderColor}  onChange={onChangeDescription} placeholder="Descrição da competência" />
+            <Textarea maxLength={255} focusBorderColor={focusBorderColor} value={description} onChange={onChangeDescription} placeholder="Descrição da competência" />
           </FormControl>
 
           {error && <Text fontSize={"17"} fontWeight={500} color={colorErrorText} alignSelf="start">{error}</Text>}

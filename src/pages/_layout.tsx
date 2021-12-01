@@ -21,6 +21,19 @@ import {
   MenuDivider,
   MenuItem,
   MenuList,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useToast,
+  FormControl,
+  FormLabel,
+  InputGroup,
+  InputRightElement
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -32,15 +45,19 @@ import {
   FiBell,
   FiChevronDown,
 } from 'react-icons/fi';
+import { FaEyeSlash, FaEye } from "react-icons/fa"
 
 import { MdAdd } from 'react-icons/md'
 
-import {Link as LinkRouter} from 'react-router-dom'
+import { Link as LinkRouter } from 'react-router-dom'
 
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 import { useHistory } from 'react-router';
+import InputApp from '../components/input';
+import { truncate } from 'fs';
+import api from '../services/api';
 
 interface LinkItemProps {
   name: string;
@@ -54,8 +71,8 @@ export default function Layout({
   children: ReactNode;
 }) {
 
- 
-  
+
+
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
@@ -93,28 +110,36 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const history = useHistory()
 
   let LinkItems: Array<LinkItemProps> = [
-    { name: 'Minhas Avaliações', icon: FiHome, onClick: () => {
-      history.push('/dashboard')
-    } },
-   
+    {
+      name: 'Minhas Avaliações', icon: FiHome, onClick: () => {
+        history.push('/dashboard')
+      }
+    },
+
   ];
-  
-  if(localStorage.getItem('role') === 'admin') {
-    LinkItems = [...LinkItems ,  { name: 'Todas Avaliações', icon: FiTrendingUp , onClick: () => {
-      history.push('/todas-avaliacoes')
-    } },
-    { name: 'Criar Avaliação', icon: MdAdd , onClick: () => {
-      history.push('/criar-avaliacao')
-    } },
-    { name: 'Criar Competência', icon: MdAdd , onClick: () => {
-      history.push('/criar-competencia')
-    } }
-  ]
+
+  if (localStorage.getItem('role') === 'admin') {
+    LinkItems = [...LinkItems, {
+      name: 'Todas Avaliações', icon: FiTrendingUp, onClick: () => {
+        history.push('/todas-avaliacoes')
+      }
+    },
+    {
+      name: 'Criar Avaliação', icon: MdAdd, onClick: () => {
+        history.push('/criar-avaliacao')
+      }
+    },
+    {
+      name: 'Criar Competência', icon: MdAdd, onClick: () => {
+        history.push('/criar-competencia')
+      }
+    }
+    ]
   }
 
   return (
     <Box
-    
+
       bg={useColorModeValue('white', 'gray.900')}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
@@ -174,13 +199,103 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   const history = useHistory()
+  const { isOpen, onOpen: onOpen2, onClose } = useDisclosure();
+
+  const [currentPassword, setCurrentPassword] = React.useState("")
+  const [newPassword, setNewPassword] = React.useState("")
+  const [showCurrentPassword, setShowCurrentPassword] = React.useState(false)
+  const [showNewPassword, setShowNewPassword] = React.useState(false)
+
+  const [isLoadingButton, setIsLoadingButton] = React.useState(false)
+  const [isButtonDisabled, setIsButtonDisabled] = React.useState(true)
+  const toast = useToast()
+ 
+  
+  function onChangeCurrentPassword(e: any) {
+    setCurrentPassword(e.target.value);
+    if(e.target.value !== "" && newPassword.length >= 8) {
+      setIsButtonDisabled(false)
+    }else {
+      setIsButtonDisabled(true)
+    }
+  }
+
+  function onChangeNewPassword(e: any) {
+    setNewPassword(e.target.value);
+    if(e.target.value.length >= 8 && currentPassword !== "") {
+      setIsButtonDisabled(false)
+    }else {
+      setIsButtonDisabled(true)
+    }
+  }
+ 
 
   function signOut() {
-    localStorage.setItem('isAuthenticated' , "false")
-    localStorage.setItem("token" , "")
+    localStorage.setItem('isAuthenticated', "false")
+    localStorage.setItem("token", "")
     history.push("/")
   }
-  
+
+  function handleSubmit() {
+    const token = 'Bearer ' + localStorage.getItem('token')
+    setIsLoadingButton(true)
+    api.put(`/user/change-password`, {
+      currentPassword,
+      newPassword
+    },
+      {
+        headers: {
+          Authorization: token
+        }
+      }
+
+    ).then((response) => {
+      onClose()
+
+      toast({
+        title: "Sucesso!",
+        description: "Senha alterada com sucesso!",
+        position: "top-right",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
+      
+      setIsLoadingButton(false)
+    }).catch(e => {
+      if (e.response) {
+        if (e.response.status === 401) {
+          localStorage.setItem("token", "")
+          localStorage.setItem("isAuthenticated", 'false')
+          history.push('/')
+          return
+        } else if (e.response.status === 400) {
+          toast({
+            title: "Erro!",
+            description: "Senha Atual Incorreta!",
+            position: "top-right",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          })
+          setIsLoadingButton(false)
+          return;
+        }
+
+        toast({
+          title: "Erro!",
+          description: "Erro inesperado!",
+          position: "top-right",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        })
+
+        setIsLoadingButton(false)
+      }
+    })
+  }
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
@@ -205,11 +320,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         fontSize="2xl"
         fontFamily="monospace"
         fontWeight="bold">
-       INTS
+        INTS
       </Text>
 
       <HStack spacing={{ base: '0', md: '6' }}>
-      <ColorModeSwitcher/>
+        <ColorModeSwitcher />
         <Flex alignItems={'center'}>
           <Menu>
             <MenuButton
@@ -225,14 +340,14 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
                   alignItems="flex-start"
                   spacing="1px"
                   ml="2">
-      
+
                   <Text fontSize="sm">{
-                  localStorage.getItem("user_name") || 'Usuário'
+                    localStorage.getItem("user_name") || 'Usuário'
                   }</Text>
-                  
+
                   <Text fontSize="xs" color="gray.600">
                     {
-                  localStorage.getItem("role") === 'user' ? "Usuário" : "Admin"
+                      localStorage.getItem("role") === 'user' ? "Usuário" : "Admin"
                     }
                   </Text>
                 </VStack>
@@ -244,13 +359,54 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             <MenuList
               bg={useColorModeValue('white', 'gray.900')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}>
-              <MenuItem>Trocar senha</MenuItem>
+              <MenuItem onClick={onOpen2}>Trocar senha</MenuItem>
               <MenuDivider />
               <MenuItem onClick={() => signOut()}>Sair</MenuItem>
             </MenuList>
           </Menu>
         </Flex>
       </HStack>
+      <Modal as="form" scrollBehavior={"inside"} size="sm" onClose={onClose} isOpen={isOpen} isCentered>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Alterar Senha</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody >
+            <VStack spacing={6}>
+            <FormControl>
+              <FormLabel>Senha Atual</FormLabel>
+              <InputGroup>
+                <InputApp value={currentPassword} onChange={(e) => onChangeCurrentPassword(e)} placeholder="Sua senha atual" type={showCurrentPassword === false ? 'password' : 'text'} />
+                <InputRightElement children={<IconButton
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                  h="1.75rem" size="sm"
+                  bg="transparent"
+                  aria-label="Call Sage"
+                  icon={showCurrentPassword === false ? <FaEyeSlash /> : <FaEye />}
+                />} />
+              </InputGroup>
+            </FormControl>
+
+            <FormControl>
+              <FormLabel>Nova Senha</FormLabel>
+              <InputGroup>
+                <InputApp value={newPassword} onChange={(e) => onChangeNewPassword(e)} placeholder="No mínimo 8 digitos" type={showNewPassword === false ? 'password' : 'text'} />
+                <InputRightElement children={<IconButton
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  h="1.75rem" size="sm"
+                  bg="transparent"
+                  aria-label="Call Sage"
+                  icon={showNewPassword === false ? <FaEyeSlash /> : <FaEye />}
+                />} />
+              </InputGroup>
+            </FormControl>
+            </VStack>
+          </ModalBody>
+          <ModalFooter display="flex" justifyContent="flex-end">
+            <Button  disabled={isButtonDisabled} type="submit" isLoading={isLoadingButton} onClick={() => handleSubmit()} colorScheme="green" >Trocar Senha</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   );
 };

@@ -115,13 +115,13 @@ export default function Login() {
                 shadow="lg" spacing={6} width={"100%"} >
                 <FormControl>
                   <FormLabel>CPF</FormLabel>
-                  <InputApp maxLength="16" onChange={onChangeCpf} placeholder="Apenas números" type="text" />
+                  <InputApp value={cpf} maxLength="16" onChange={onChangeCpf} placeholder="Apenas números" type="text" />
                 </FormControl>
 
                 <FormControl>
                   <FormLabel>Senha</FormLabel>
                   <InputGroup>
-                    <InputApp onChange={onChangePassword} placeholder="Sua senha" type={showPassword === false ? 'password' : 'text'} />
+                    <InputApp value={password} onChange={onChangePassword} placeholder="Sua senha" type={showPassword === false ? 'password' : 'text'} />
                     <InputRightElement children={<IconButton
                       onClick={() => setShowPassword(!showPassword)}
                       h="1.75rem" size="sm"
