@@ -12,6 +12,11 @@ export default function InputApp({
 }) {
   const focusBorderColor = useColorModeValue("green.400", "green.200")
 
+  if(type === 'file') {
+    return (
+      <Input  width={width} maxLength={maxLength} onChange={(e : any) => onChange(e)} placeholder={placeholder} isRequired={isRequired} type={type} focusBorderColor={focusBorderColor}/>
+    )
+  }
   return (
     <Input value={value} width={width} maxLength={maxLength} onChange={(e : any) => onChange(e)} placeholder={placeholder} isRequired={isRequired} type={type} focusBorderColor={focusBorderColor}/>
   )

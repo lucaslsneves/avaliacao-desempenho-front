@@ -62,7 +62,7 @@ export default function TableMyGrades({ teamId = 0 }) {
     setButtonIsLoading(true)
     try {
       const token = 'Bearer ' + localStorage.getItem('token')
-      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${teamId}&member=${memberId}`
+      const response = await api.get(`http://192.168.10.191:3333/grades/member-pdf?team=${teamId}&member=${memberId}`
         ,
         {
           responseType: 'blob', headers: {

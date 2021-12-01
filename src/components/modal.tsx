@@ -19,7 +19,7 @@ import {
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
 
-export default function MyModal({ title = "Modal", assessmentId = 0, requestBody, availableToSee = false }) {
+export default function MyModal({ title = "Modal", assessmentId = 0, requestBody, availableToSee = false , availableToAnswer = false , manager=false }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [isLoadedButton, setIsLoadedButton] = React.useState(false)
@@ -233,8 +233,11 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
   }
 
   return (
+    // manager é utilizado para desabilitar apenas em gestores masters o botão de avaliar
+    // Em gestores que nao são masters eles nem conseguem acessar a página
     <>
       <Button padding="12px 0"
+      disabled={manager === false ? false : !availableToAnswer}
         w={'full'}
         mt={"auto"}
         bg={buttonBg}
@@ -261,7 +264,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
                       <FormLabel fontWeight={600} cursor="pointer">{competency.name} - 
                         <Text ml="2" display="inline-block" fontWeight="700">{competency.value || 0}%</Text>
                       </FormLabel>
-                      <Text>{competency.description}</Text>
+                      <Text fontSize="sm">{competency.description}</Text>
 
                     <Slider step={5} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
                       handleChangeSlider(value, i)

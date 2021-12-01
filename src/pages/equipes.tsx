@@ -89,7 +89,7 @@ export default function Equipes(props) {
                 name={'Avalie sua equipe'} key={team.team_id}
                 hierarchy={team.hierarchy}
                 handleClick={() => {
-                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId,  availableToSee: location.state.availableToSee })
+                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId,  availableToSee: location.state.availableToSee  })
                 }}
               />)}
 
@@ -117,13 +117,13 @@ export default function Equipes(props) {
             <Heading size="lg" marginTop={3} color={headingColor}> {`${teams.teams[0].area} - ${location.state?.assessmentGroupName}`}</Heading>
             {teams.teams.map(team =>
               <TeamHorizontalCard
-                isAvailable={location.state.availableToAnswer}
+                isAvailable={true}
                 unity={team.unity}
                 role={team.role}
                 name={'Avalie sua equipe'} key={team.team_id}
                 hierarchy={team.hierarchy}
                 handleClick={() => {
-                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId , availableToSee: location.state.availableToSee })
+                  history.push('/equipes/membros', { manager: true , teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId , availableToSee: location.state.availableToSee, availableToAnswer: location.state.availableToAnswer })
                 }}
               />)}
           </VStack>

@@ -11,6 +11,7 @@ export default function TeamHorizontalCard({
   hierarchy = 0,
   buttonTitle = "Avaliar",
   isCollaborator = false,
+  manager = false,
   manangers = []
 }: any) {
   const textColor = useColorModeValue("white", "gray.600")

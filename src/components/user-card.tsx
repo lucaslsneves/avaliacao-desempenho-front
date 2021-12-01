@@ -26,6 +26,8 @@ export default function UserCard({
   role = "Cargo",
   checked = false,
   availableToSee = false,
+  availableToAnswer = false,
+  manager = false,
   handleClick = () => { },
   assessmentId = 0
 }) {
@@ -35,7 +37,7 @@ export default function UserCard({
     setButtonIsLoading(true)
     try {
       const token = 'Bearer ' + localStorage.getItem('token')
-      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${requestBody.teamId}&member=${requestBody.collaboratorId}`
+      const response = await api.get(`http://192.168.10.191:3333/grades/member-pdf?team=${requestBody.teamId}&member=${requestBody.collaboratorId}`
         ,
         {
           responseType: 'blob', headers: {
@@ -109,7 +111,7 @@ export default function UserCard({
           </Heading>
           <Text color={'gray.500'}>{role}</Text>
         </Stack>
-        <MyModal availableToSee={availableToSee} requestBody={requestBody} title={`${name} | ${role}`} assessmentId={assessmentId} />
+        <MyModal manager={manager} availableToSee={availableToSee} availableToAnswer={availableToAnswer} requestBody={requestBody} title={`${name} | ${role}`} assessmentId={assessmentId} />
       </VStack>
     </Box>
   );

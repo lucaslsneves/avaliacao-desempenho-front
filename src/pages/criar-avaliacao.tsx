@@ -181,7 +181,7 @@ const toast = useToast()
           <FormControl isRequired>
             <FormLabel>Membros</FormLabel>
 
-            <InputApp value={members} onChange={onChangeMembers}
+            <InputApp  onChange={onChangeMembers}
               placeholder="Apenas números" type="file" />
 
           </FormControl>
@@ -236,7 +236,7 @@ const toast = useToast()
             <VStack justifyContent="flex-start" alignItems="fl">
               <FormLabel>Data de Fim</FormLabel>
               <Box border="1px solid black" borderColor="gray.200" padding="5px" borderRadius="lg">
-              <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} locale="pt"/>
+              <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} locale="pt"/>
               </Box>
             </VStack>
 

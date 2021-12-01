@@ -33,7 +33,8 @@ import {
   FormControl,
   FormLabel,
   InputGroup,
-  InputRightElement
+  InputRightElement,
+  Image
 } from '@chakra-ui/react';
 import {
   FiHome,
@@ -50,7 +51,8 @@ import { FaEyeSlash, FaEye } from "react-icons/fa"
 import { MdAdd } from 'react-icons/md'
 
 import { Link as LinkRouter } from 'react-router-dom'
-
+import LogoGreen from '../assets/logo-green.png'
+import LogoWhite from '../assets/logo-white.svg'
 import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
@@ -136,6 +138,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     }
     ]
   }
+  const theme = useColorModeValue("light", "dark");
+
 
   return (
     <Box
@@ -148,9 +152,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       h="full"
       {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          INTS
-        </Text>
+      {theme === 'dark' ? <Image width={90}  src={LogoWhite} /> : <Image width={90}  src={LogoGreen} />}
+
         <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
