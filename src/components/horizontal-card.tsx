@@ -1,4 +1,4 @@
-import { HStack, Heading, Text, useColorModeValue, VStack, Tag, TagLeftIcon, TagLabel, Button, Switch, useToast } from '@chakra-ui/react'
+import { HStack, Heading, Text, useColorModeValue, VStack, Tag, TagLeftIcon, TagLabel, Button, Switch, useToast, Box } from '@chakra-ui/react'
 import React from 'react'
 import { FaArrowRight, FaLock } from 'react-icons/fa'
 import { useHistory } from 'react-router'
@@ -44,7 +44,7 @@ export default function HorizontalCard({
           }
           {
             admin && <HStack>
-              <Text fontWeight="500">Feedback</Text> <Switch defaultIsChecked={availableToSee} onChange={ async () => {
+              <Text fontWeight="500">Feedback Colaborador</Text> <Switch defaultIsChecked={availableToSee} onChange={ async () => {
                  const token = 'Bearer ' + localStorage.getItem('token')
                 api.put(`/assessments/${assessmentId}` ,{availableToSee : !availableToSee}, {
                   headers: {
@@ -104,7 +104,40 @@ export default function HorizontalCard({
           }
 
         </VStack>
-        <Button onClick={handleClick} alignSelf="flex-end" colorScheme="green" rightIcon={<FaArrowRight />}>Acessar</Button>
+        <HStack justifyContent="space-between" width="100%" alignItems="center">
+          <HStack>
+          <Text fontWeight="500">Feedback Gestor</Text> <Switch defaultIsChecked={availableToSee} onChange={ async () => {
+                 const token = 'Bearer ' + localStorage.getItem('token')
+                api.put(`/assessments/${assessmentId}` ,{availableToSee : !availableToSee}, {
+                  headers: {
+                    Authorization: token
+                  } 
+                }).then(({data}) => {
+                 
+                  window.location.reload();
+                 
+                }).catch(e => {
+                  if (e.response) {
+                    if (e.response.status === 401) {
+                      localStorage.setItem("token", "")
+                      localStorage.setItem("isAuthenticated", 'false')
+                      history.push('/')
+                    } else {
+                      toast({
+                        title: "Danger!",
+                        description: "Erro ao liberar",
+                        position: "top-right",
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                      })
+                    }
+                  }
+                })
+              }} colorScheme="green" size="lg" />
+            </HStack>
+        <Button onClick={handleClick} colorScheme="green" rightIcon={<FaArrowRight />}>Acessar</Button>
+        </HStack>
       </VStack>
     </HStack>
   )
