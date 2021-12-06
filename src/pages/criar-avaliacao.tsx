@@ -197,7 +197,7 @@ const toast = useToast()
             <InputApp value={description} onChange={onChangeDescription} placeholder="Descrição da avaliação" />
           </FormControl>
 
-          <Heading fontSize="md" fontWeight="500" width="100%">Competências</Heading>
+          <Heading fontSize="md" fontWeight="500" width="100%">Competências Colaborador</Heading>
           <Box width="100%">
             <Select
               isMulti

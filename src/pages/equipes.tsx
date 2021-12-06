@@ -77,6 +77,25 @@ export default function Equipes(props) {
   if (!isLoaded) {
     if (teams.mananger) {
       if (teams.manangers.length > 0) {
+        if (teams?.noOneToRate) {
+          return (
+            <VStack spacing={6}>
+            <Heading size="lg" marginTop={3} color={headingColor}> {`${teams.teams[0].area} - ${location.state?.assessmentGroupName}`}</Heading>
+              {teams.teams.map(team =>
+                <TeamHorizontalCard
+                  isAvailable={location.state.availableToSee}
+                  buttonTitle="Acessar"
+                  name={'Ver avaliação dos gestores'} key={team.team_id}
+                  hierarchy={team.hierarchy}
+                  isCollaborator={true}
+                  manangers={teams.manangers}
+                  handleClick={() => {
+                    history.push('/minhas-notas', { teamId: team.team_id })
+                  }}
+                />)}
+            </VStack>
+          )
+        }
         return (
           // Gestor Avalia sua equipe
           <VStack spacing={6}>
@@ -89,7 +108,7 @@ export default function Equipes(props) {
                 name={'Avalie sua equipe'} key={team.team_id}
                 hierarchy={team.hierarchy}
                 handleClick={() => {
-                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId,  availableToSee: location.state.availableToSee  })
+                  history.push('/equipes/membros', { teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId, availableToSee: location.state.availableToSee })
                 }}
               />)}
 
@@ -123,7 +142,7 @@ export default function Equipes(props) {
                 name={'Avalie sua equipe'} key={team.team_id}
                 hierarchy={team.hierarchy}
                 handleClick={() => {
-                  history.push('/equipes/membros', { manager: true , teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId , availableToSee: location.state.availableToSee, availableToAnswer: location.state.availableToAnswer })
+                  history.push('/equipes/membros', { manager: true, teamId: team.team_id, teamName: team.area, assessmentId: location.state.assessmentId, availableToSee: location.state.availableToSee, availableToAnswer: location.state.availableToAnswer })
                 }}
               />)}
           </VStack>

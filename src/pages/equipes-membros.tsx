@@ -137,7 +137,7 @@ export default function EquipesMembros(props) {
         <SimpleGrid mt="10" justifyItems="center" width="100%" minChildWidth="270px" gap={10}>
           {
             members.map(member => <UserCard
-            manager = {location.state.manager}
+            manager={location.state.manager}
               assessmentId={location.state.assessmentId}
               key={member.id}
               name={member.name}
