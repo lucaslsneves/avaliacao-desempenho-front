@@ -49,18 +49,11 @@ export default function HorizontalCard({
                 api.put(`/assessments/${assessmentId}` ,{availableToSee : !availableToSee}, {
                   headers: {
                     Authorization: token
-                  }
+                  } 
                 }).then(({data}) => {
-                  console.log(data)
-                  toast({
-                    title: "Sucesso!",
-                    description: "Feedback atualizado!",
-                    position: "top-right",
-                    status: "success",
-                    duration: 5000,
-                    isClosable: true,
-                  })
-                  history.push('/todas-avaliacoes')
+                 
+                  window.location.reload();
+                 
                 }).catch(e => {
                   if (e.response) {
                     if (e.response.status === 401) {
@@ -87,16 +80,7 @@ export default function HorizontalCard({
                     Authorization: token
                   }
                 }).then(({data}) => {
-                  console.log(data)
-                  toast({
-                    title: "Sucesso!",
-                    description: "Feedback atualizado!",
-                    position: "top-right",
-                    status: "success",
-                    duration: 5000,
-                    isClosable: true,
-                  })
-                  history.push('/todas-avaliacoes')
+                  window.location.reload();
                 }).catch(e => {
                   if (e.response) {
                     if (e.response.status === 401) {
