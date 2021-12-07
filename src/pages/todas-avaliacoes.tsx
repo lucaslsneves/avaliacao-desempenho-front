@@ -66,6 +66,7 @@ export default function TodasAvaliacoes(props) {
         <Heading color={headingColor}>Todas Avaliações</Heading>
         {assessmentsGroups.map(assessmentGroup => 
         <HorizontalCard 
+          key={assessmentGroup.id}
           admin={true}
           assessmentId={assessmentGroup.assessment_id}
           assessmentGroupId={assessmentGroup.id}

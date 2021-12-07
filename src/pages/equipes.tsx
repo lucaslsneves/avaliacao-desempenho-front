@@ -53,10 +53,12 @@ export default function Equipes(props) {
     location.state.availableToAnswer === null ||
     location.state.availableToAnswer === undefined ||
     location.state.availableToSee === null ||
-    location.state.availableToSee === undefined) {
-    history.push('/')
+    location.state.availableToSee === undefined ||
+    location.state.availableToSeeCollaborator === null ||
+    location.state.availableToSeeCollaborator === undefined) {
+      history.push('/')
 
-    return <div></div>;
+     return <div></div>;
   }
 
 
@@ -80,7 +82,7 @@ export default function Equipes(props) {
         if (teams?.noOneToRate) {
           return (
             <VStack spacing={6}>
-            <Heading size="lg" marginTop={3} color={headingColor}> {`${teams.teams[0].area} - ${location.state?.assessmentGroupName}`}</Heading>
+              <Heading size="lg" marginTop={3} color={headingColor}> {`${teams.teams[0].area} - ${location.state?.assessmentGroupName}`}</Heading>
               {teams.teams.map(team =>
                 <TeamHorizontalCard
                   isAvailable={location.state.availableToSee}
@@ -150,12 +152,13 @@ export default function Equipes(props) {
       }
     }
     // Colaborador ver as notas dos seus gestores
+    console.log('brtt')
     return (
       <VStack spacing={6}>
         <Heading size="lg" marginTop={3} color={headingColor}> {`${teams.teams[0].area} - ${location.state?.assessmentGroupName}`}</Heading>
         {teams.teams.map(team =>
           <TeamHorizontalCard
-            isAvailable={location.state.availableToSee}
+            isAvailable={location.state.availableToSeeCollaborator}
             buttonTitle="Acessar"
             key={team.team_id}
             hierarchy={team.hierarchy}

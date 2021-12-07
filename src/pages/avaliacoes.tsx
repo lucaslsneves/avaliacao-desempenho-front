@@ -82,7 +82,8 @@ export default function Avaliacoes(props) {
               assessmentGroupName : location.state.assessmentGroupName , 
               assessmentGroupId: location.state.id , 
               availableToAnswer: assessment.available_to_answer,
-              availableToSee: assessment.available_to_see
+              availableToSee: assessment.available_to_see,
+              availableToSeeCollaborator: assessment.available_to_see_collaborator
              })
           }}
         />)}
