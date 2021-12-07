@@ -1,6 +1,9 @@
-import { HStack, Heading, Text, useColorModeValue, VStack, Tag, TagLeftIcon, TagLabel, Button, Switch, useToast, Box, useDisclosure, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@chakra-ui/react'
+import { WarningIcon } from '@chakra-ui/icons'
+import { HStack, Heading, Text, useColorModeValue, VStack,  Button, Switch, useToast,  useDisclosure, IconButton, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@chakra-ui/react'
 import React from 'react'
 import { FaArrowRight, FaTrash } from 'react-icons/fa'
+
+
 import { useHistory } from 'react-router'
 import api from '../services/api'
 export default function HorizontalCard({
@@ -18,6 +21,7 @@ export default function HorizontalCard({
   assessmentGroupId = 0
 }: any) {
   const textColor = useColorModeValue("white", "gray.600")
+  const warnColor = useColorModeValue("red.400", "red.200")
   const toast = useToast()
   const history = useHistory()
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -96,7 +100,8 @@ export default function HorizontalCard({
                   <ModalCloseButton />
                   <ModalBody padding="5" >
                     <VStack>
-                      <Text fontWeight="600">Tem certeza que deseja excluir esta avaliação ?</Text>
+                    <WarningIcon marginBottom="5" w={12} h={12} color={warnColor} />
+                      <Text fontWeight="500">Tem certeza que deseja excluir esta avaliação ?</Text>
                     </VStack>
                     <HStack margin="0 auto" marginTop="5" spacing="5" width="50%" justifyContent="center">
                       <Button onClick={onClose} colorScheme="green">Cancelar</Button>
