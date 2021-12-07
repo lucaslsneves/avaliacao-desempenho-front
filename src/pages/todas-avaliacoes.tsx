@@ -68,7 +68,9 @@ export default function TodasAvaliacoes(props) {
         <HorizontalCard 
           admin={true}
           assessmentId={assessmentGroup.assessment_id}
+          assessmentGroupId={assessmentGroup.id}
           availableToSee={assessmentGroup.available_to_see}
+          availableToSeeCollaborator={assessmentGroup.available_to_see_collaborator}
           availableToAnswer={assessmentGroup.available_to_answer}
           endDate={format(new Date(assessmentGroup.end_date), 'dd/MM/yyyy')} 
           startDate={format(new Date(assessmentGroup.start_date), 'dd/MM/yyyy')} 
