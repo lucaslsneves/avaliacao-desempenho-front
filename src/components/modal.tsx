@@ -266,7 +266,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
                       </FormLabel>
                       <Text fontSize="sm">{competency.description}</Text>
 
-                    <Slider step={5} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
+                    <Slider step={1} maxW="750px" colorScheme="green" onChangeEnd={(value) => {
                       handleChangeSlider(value, i)
                     }} defaultValue={competency.value || 0}>
                       <SliderTrack>
