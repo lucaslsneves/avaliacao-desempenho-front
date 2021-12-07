@@ -152,7 +152,6 @@ export default function Equipes(props) {
       }
     }
     // Colaborador ver as notas dos seus gestores
-    console.log('brtt')
     return (
       <VStack spacing={6}>
         <Heading size="lg" marginTop={3} color={headingColor}> {`${teams.teams[0].area} - ${location.state?.assessmentGroupName}`}</Heading>
