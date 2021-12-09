@@ -26,7 +26,6 @@ export default function Dashboard(props) {
       setTimeout(() => {
         setAssessmentsGroups(response.data.data)
         setIsLoaded(false)
-        console.log(response.data.data)
       }, 1000)
 
     }).catch(e => {

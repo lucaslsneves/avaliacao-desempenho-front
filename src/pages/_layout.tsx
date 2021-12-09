@@ -46,7 +46,7 @@ import {
   FiBell,
   FiChevronDown,
 } from 'react-icons/fi';
-import { FaEyeSlash, FaEye } from "react-icons/fa"
+import { FaEyeSlash, FaEye, FaList } from "react-icons/fa"
 
 import { MdAdd } from 'react-icons/md'
 
@@ -132,8 +132,8 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       }
     },
     {
-      name: 'Criar Competência', icon: MdAdd, onClick: () => {
-        history.push('/criar-competencia')
+      name: 'Competências', icon: FaList, onClick: () => {
+        history.push('/competencias')
       }
     }
     ]
