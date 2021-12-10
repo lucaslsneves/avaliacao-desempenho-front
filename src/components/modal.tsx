@@ -1,4 +1,4 @@
-import { FormControl, FormLabel, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Tooltip, useDisclosure } from "@chakra-ui/react"
+import { FormControl, FormLabel, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Tooltip, useDisclosure } from "@chakra-ui/react"
 import React, { useEffect } from "react"
 import {
   Modal,
@@ -203,7 +203,9 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
         <Modal scrollBehavior={"inside"} size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{title}</ModalHeader>
+            <ModalHeader>
+          
+            </ModalHeader>
             <ModalCloseButton />
             <ModalBody as="form">
               <VStack alignItems="start" w="100%" spacing={6}>
@@ -252,7 +254,33 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
       <Modal as="form" scrollBehavior={"inside"} size="2xl" onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{title}</ModalHeader>
+          
+          <ModalHeader>
+          
+          <Text>{title}</Text>
+          <HStack justifyContent="space-between" marginTop="4" fontWeight="500" fontSize="18px">
+            <VStack>
+              <Text>0% a 20%</Text>
+              <Text>Insatisfatório</Text>
+            </VStack>
+            <VStack>
+              <Text>21% a 49%</Text>
+              <Text>Pode melhorar</Text>
+            </VStack>
+            <VStack>
+              <Text>50% a 79%</Text>
+              <Text>Regular</Text>
+            </VStack>
+            <VStack>
+              <Text>80% a 90%</Text>
+              <Text>Bom</Text>
+            </VStack>
+            <VStack>
+              <Text>91% a 100%</Text>
+              <Text>Excelente</Text>
+            </VStack>
+          </HStack>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody >
             {competencies.map((competency, i) => {
