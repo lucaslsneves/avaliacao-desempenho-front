@@ -61,7 +61,7 @@ export default function HorizontalCard({
 
 
   return (
-    <HStack cursor="pointer" maxWidth="700px" as="li" height="48" w="100%" borderRadius="lg" bg={useColorModeValue("white", "gray.700")} shadow="lg" >
+    <HStack cursor="pointer" maxWidth={admin === true ? '800px' : '700px'} as="li" height="48" w="100%" borderRadius="lg" bg={useColorModeValue("white", "gray.700")} shadow="lg" >
       <VStack
         spacing={5}
         borderTopLeftRadius="lg"
