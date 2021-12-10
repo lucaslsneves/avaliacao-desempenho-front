@@ -233,7 +233,7 @@ export default function CriarCompetencia() {
           as="form"
           rounded="lg"
           bg={bgColor}
-          shadow="lg" spacing={6} width={"70%"} >
+          shadow="lg" spacing={6} width={"80%"} maxWidth="1280px" >
 
           <FormControl isRequired>
             <FormLabel>Nome</FormLabel>
@@ -262,7 +262,7 @@ export default function CriarCompetencia() {
           </HStack>
         </HStack>
 
-        <VStack rounded="lg" shadow="lg" padding={8} width={"70%"} bg={bgColor}>
+        <VStack rounded="lg" shadow="lg" padding={8} width={"80%"} maxWidth="1280px" bg={bgColor}>
 
           {
 
