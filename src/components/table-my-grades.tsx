@@ -1,8 +1,8 @@
-import { HStack, Text, Skeleton, Button, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Heading, Grid, VStack } from "@chakra-ui/react"
+import { HStack, Text, Skeleton, Button, Table, TableCaption, Box, Tbody, Td, Th, Thead, Tooltip, Tr, useDisclosure, Heading, Grid, VStack, Modal, ModalOverlay, ModalContent, ModalHeader, ModalBody, ModalFooter, useToast } from "@chakra-ui/react"
 import React, { useEffect, useMemo } from "react"
 import api from "../services/api";
 import { useHistory } from "react-router-dom";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
+import { Icon, CheckCircleIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy } from "react-table"
 import { CSVLink } from "react-csv"
 import { MdFileDownload } from 'react-icons/md'
@@ -16,9 +16,11 @@ export default function TableMyGrades({ teamId = 0 }) {
   const [averages, setAverages] = React.useState([])
   const [overall, setOverall] = React.useState(0)
   const [memberId, setMemberId] = React.useState(0)
+  const [alreadySeenFeedback, setAlreadySeenFeedback] = React.useState(false)
+  const [buttonModalIsLoading, setButtonModalIsLoading] = React.useState(false)
 
   const history = useHistory()
-
+  const toast = useToast()
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
     api.get(`/teams/members/grades/collaborator?team=${teamId}`, {
@@ -36,6 +38,7 @@ export default function TableMyGrades({ teamId = 0 }) {
       setOverall(overall)
       setAverages(response.data.averages)
       setMemberId(response.data.memberId)
+      setAlreadySeenFeedback(response.data.alreadySeenFeedback)
       setGrades(response.data.grades)
       setError(false)
       setIsLoaded(false)
@@ -58,18 +61,50 @@ export default function TableMyGrades({ teamId = 0 }) {
 
   }, [])
 
+  const {  onClose } = useDisclosure();
+
+   function confirmFeedback() {
+    setButtonModalIsLoading(true)
+    const token = 'Bearer ' + localStorage.getItem('token')
+    api.put(`/members/${memberId}`, { alreadySeenFeedback: true }, {
+      headers: {
+        Authorization: token
+      }
+    }).then(({ data }) => {
+      setButtonModalIsLoading(false)
+      window.location.reload();
+    }).catch(e => {
+      if (e.response) {
+        if (e.response.status === 401) {
+          localStorage.setItem("token", "")
+          localStorage.setItem("isAuthenticated", 'false')
+          history.push('/')
+        } else {
+          toast({
+            title: "Erro!",
+            description: "Erro ao deletar avaliação",
+            position: "top-right",
+            status: "error",
+            duration: 5000,
+            isClosable: true,
+          })
+        }
+      }
+      setButtonModalIsLoading(false)
+    })
+  }
+
   async function generatePdf() {
     setButtonIsLoading(true)
     try {
       const token = 'Bearer ' + localStorage.getItem('token')
-      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${teamId}&member=${memberId}`
+      const response = await api.get(`http://192.168.10.191:3333/grades/member-pdf?team=${teamId}&member=${memberId}`
         ,
         {
           responseType: 'blob', headers: {
             Authorization: token
           }
         })
-        console.log('oi')
       const file = new Blob(
         [response.data],
         { type: 'application/pdf' });
@@ -135,10 +170,33 @@ export default function TableMyGrades({ teamId = 0 }) {
   if (error) {
     return <Text>Ops, erro inesperado! table-my-grades</Text>
   }
+
+
+  if(!alreadySeenFeedback) {
+    return (
+      <Modal scrollBehavior={"inside"} size="sm" onClose={onClose} isOpen={!alreadySeenFeedback} isCentered>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Feedback</ModalHeader>
+        <ModalBody >
+          <VStack spacing="5">
+        <Icon as={CheckCircleIcon} w="12" h="12" color="green.400" />
+          <Text textAlign="center" fontWeight="500">Você confirma que recebeu o feedback da avaliação de desempenho ?</Text>
+          </VStack>
+        </ModalBody>
+        <ModalFooter display="flex" justifyContent="center">
+          <Button isLoading={buttonModalIsLoading} onClick={confirmFeedback} colorScheme="green" >Confirmar</Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
+    )
+  }
+
+
   return (
     <>
       <HStack alignItems="center" justifyContent="space-between" mt="4" pr="20">
-        <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name || ""} - ${grades[0]?.collaborator_role || ""}`}</Heading>
+        <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name || "Notas"} - ${grades[0]?.collaborator_role || "Colaborador"}`}</Heading>
         <Button onClick={generatePdf} isLoading={buttonIsLoading} rightIcon={<MdFileDownload />} colorScheme='green'>
           Gerar PDF
   </Button>

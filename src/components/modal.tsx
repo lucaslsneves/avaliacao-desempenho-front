@@ -258,7 +258,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
           <ModalHeader>
           
           <Text>{title}</Text>
-          <HStack justifyContent="space-between" marginTop="4" fontWeight="500" fontSize="18px">
+          <HStack justifyContent="space-between" marginTop="4" fontWeight="500" fontSize="15px">
             <VStack>
               <Text>0% a 20%</Text>
               <Text>Insatisfatório</Text>
