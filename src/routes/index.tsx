@@ -33,7 +33,7 @@ export default function Routes() {
       <Route path="/todas-equipes" exact component={TodasEquipes} isPrivate />
       <Route path="/todas-notas" exact component={TodasNotas} isPrivate />
       <Route path="/criar-avaliacao" exact component={CriarAvaliacao} isPrivate />
-      <Route path="/criar-competencia" exact component={CriarCompetencia} isPrivate />
+      <Route path="/competencias" exact component={CriarCompetencia} isPrivate />
       
       <Route2 path="*" exact component={Page404}  />
     </Switch>

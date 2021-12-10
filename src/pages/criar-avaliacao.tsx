@@ -52,12 +52,12 @@ export default function CriarAvaliacao() {
 const toast = useToast()
   React.useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/competencies`, {
+    api.get(`/competencies?limit=50`, {
       headers: {
         Authorization: token
       }
     }).then(({ data }) => {
-      setOptions([...data.map(competency => ({ label: competency.name, value: competency.id }))])
+      setOptions([...data.data.map(competency => ({ label: competency.name, value: competency.id }))])
     }).catch((e) => {
       if (e.response) {
         const data = e.response.data
