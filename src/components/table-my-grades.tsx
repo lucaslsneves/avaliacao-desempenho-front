@@ -82,7 +82,7 @@ export default function TableMyGrades({ teamId = 0 }) {
         } else {
           toast({
             title: "Erro!",
-            description: "Erro ao deletar avaliação",
+            description: "Erro inesperado",
             position: "top-right",
             status: "error",
             duration: 5000,
@@ -181,11 +181,15 @@ export default function TableMyGrades({ teamId = 0 }) {
         <ModalBody >
           <VStack spacing="5">
         <Icon as={CheckCircleIcon} w="12" h="12" color="green.400" />
-          <Text textAlign="center" fontWeight="500">Você confirma que recebeu o feedback da avaliação de desempenho ?</Text>
+          <Text textAlign="center" fontWeight="500">Seu gestor já lhe deu o feedback da avaliação de desempenho ?</Text>
           </VStack>
         </ModalBody>
         <ModalFooter display="flex" justifyContent="center">
-          <Button isLoading={buttonModalIsLoading} onClick={confirmFeedback} colorScheme="green" >Confirmar</Button>
+          <Button mr="5" colorScheme="red" onClick={() => {
+            setAlreadySeenFeedback(true)
+            onClose()
+          }}>Não</Button>
+          <Button isLoading={buttonModalIsLoading} onClick={confirmFeedback} colorScheme="green" >Sim</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

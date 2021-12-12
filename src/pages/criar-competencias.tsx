@@ -247,7 +247,7 @@ export default function CriarCompetencia() {
           </FormControl>
 
           {error && <Text fontSize={"17"} fontWeight={500} color={colorErrorText} alignSelf="start">{error}</Text>}
-          <Button isDisabled={disabled} type="submit" onClick={(e) => handleSubmit(e)} isLoading={loading} width="100%" colorScheme="green">Entrar</Button>
+          <Button isDisabled={disabled} type="submit" onClick={(e) => handleSubmit(e)} isLoading={loading} width="100%" colorScheme="green">Criar</Button>
         </VStack>
         <Heading>Competências</Heading>
 

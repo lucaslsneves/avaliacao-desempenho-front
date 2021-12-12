@@ -17,6 +17,7 @@ import TodasEquipes from '../pages/todas-equipes';
 import TodasNotas from '../pages/todas-notas';
 import CriarAvaliacao from '../pages/criar-avaliacao';
 import CriarCompetencia from '../pages/criar-competencias';
+import AdicionarMembro from '../pages/adicionar-membro';
 
 
 export default function Routes() {
@@ -34,6 +35,7 @@ export default function Routes() {
       <Route path="/todas-notas" exact component={TodasNotas} isPrivate />
       <Route path="/criar-avaliacao" exact component={CriarAvaliacao} isPrivate />
       <Route path="/competencias" exact component={CriarCompetencia} isPrivate />
+      <Route path="/adicionar-membro" exact component={AdicionarMembro} isPrivate />
       
       <Route2 path="*" exact component={Page404}  />
     </Switch>
