@@ -13,6 +13,13 @@ import {
   toast,
   Input,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  IconButton,
 
 } from '@chakra-ui/react'
 import { FaEyeSlash, FaEye } from "react-icons/fa"
@@ -27,6 +34,7 @@ import { useHistory } from 'react-router-dom'
 import formatISO from 'date-fns/formatISO'
 import Select from 'react-select'
 import InputMask from "react-input-mask";
+import { EditIcon } from '@chakra-ui/icons';
 
 export default function AdicionarMembro() {
   const theme = useColorModeValue("light", "dark");
@@ -106,7 +114,7 @@ export default function AdicionarMembro() {
 
   async function handleSubmit(e) {
     e.preventDefault()
-   
+
 
 
     try {
@@ -163,7 +171,7 @@ export default function AdicionarMembro() {
           localStorage.setItem("isAuthenticated", 'false')
           history.push('/')
         } else if (e.response.status === 400) {
-          if(data.rule === 'required') {
+          if (data.rule === 'required') {
             setError('Preencha todos os campos obrigatórios')
           }
         }
@@ -178,7 +186,7 @@ export default function AdicionarMembro() {
 
   }
 
-
+  const focusBorderColor = useColorModeValue('green.400', 'green.200')
 
   return (
     <>
@@ -208,8 +216,8 @@ export default function AdicionarMembro() {
             <FormControl flex="3" isRequired>
               <FormLabel>CPF</FormLabel>
               <Input
-                focusBorderColor={useColorModeValue('green.400', 'green.200')}
-                as={InputMask} mask="***.***.***-**"
+                focusBorderColor={focusBorderColor}
+                as={InputMask} mask="999.999.999-99"
                 maskChar={null}
                 value={cpf}
                 onChange={(e) => setCpf(e.target.value)}
@@ -273,6 +281,7 @@ export default function AdicionarMembro() {
           {error && <Text fontSize={"17"} fontWeight={500} color={colorErrorText} alignSelf="start">{error}</Text>}
           <Button type="submit" onClick={(e) => handleSubmit(e)} isLoading={loading} width="100%" colorScheme="green">Entrar</Button>
         </VStack>
+
       </VStack>
     </>
   )

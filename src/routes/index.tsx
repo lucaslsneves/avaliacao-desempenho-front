@@ -18,6 +18,7 @@ import TodasNotas from '../pages/todas-notas';
 import CriarAvaliacao from '../pages/criar-avaliacao';
 import CriarCompetencia from '../pages/criar-competencias';
 import AdicionarMembro from '../pages/adicionar-membro';
+import Usuarios from '../pages/usuarios';
 
 
 export default function Routes() {
@@ -36,6 +37,7 @@ export default function Routes() {
       <Route path="/criar-avaliacao" exact component={CriarAvaliacao} isPrivate />
       <Route path="/competencias" exact component={CriarCompetencia} isPrivate />
       <Route path="/adicionar-membro" exact component={AdicionarMembro} isPrivate />
+      <Route path="/usuarios" exact component={Usuarios} isPrivate />
       
       <Route2 path="*" exact component={Page404}  />
     </Switch>

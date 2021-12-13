@@ -48,7 +48,7 @@ import {
 } from 'react-icons/fi';
 import { FaEyeSlash, FaEye, FaList } from "react-icons/fa"
 
-import { MdAdd , MdPersonAdd } from 'react-icons/md'
+import { MdAdd , MdPersonAdd , MdPerson } from 'react-icons/md'
 
 import { Link as LinkRouter } from 'react-router-dom'
 import LogoGreen from '../assets/logo-green.png'
@@ -139,6 +139,11 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
     {
       name: 'Adicionar Membro', icon: MdPersonAdd, onClick: () => {
         history.push('/adicionar-membro')
+      }
+    },
+    {
+      name: 'Usuários', icon: MdPerson, onClick: () => {
+        history.push('/usuarios')
       }
     }
     ]
