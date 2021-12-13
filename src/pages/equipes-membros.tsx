@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
 import { Heading, HStack, VStack } from '@chakra-ui/layout';
-import { Box, Text, Button, Grid, IconButton, Skeleton, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr, SimpleGrid } from '@chakra-ui/react';
+import { Box, Text, Button, Grid, IconButton, Skeleton, Table, TableCaption, Tbody, Td, Tfoot, Th, Thead, Tr, SimpleGrid, Input } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import api from '../services/api';
@@ -58,6 +58,7 @@ export default function EquipesMembros(props) {
     })
 
   }
+  const focusBorderColor = useColorModeValue("green.400", "green.200")
 
 
   const headingColor = useColorModeValue('gray.700', 'white');
@@ -120,7 +121,7 @@ export default function EquipesMembros(props) {
           <Heading fontSize={{ base: '22px', md: '26px', lg: '33px' }} marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
           <VStack>
             <HStack mt="5" spacing="5" display="inline-flex">
-              <InputApp width="300px" onChange={onChangeSearch} placeholder="Buscar" />
+              <Input focusBorderColor={focusBorderColor} width="300px" onChange={onChangeSearch} placeholder="Buscar" />
               <Button cursor="pointer" onClick={() => setIsTable(!isTable)} variant="outline" leftIcon={<VscGraph />} colorScheme="green">
                 Relatórios
               </Button>
