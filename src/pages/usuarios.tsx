@@ -47,6 +47,7 @@ export default function Usuarios() {
     const [cpf, setCpf] = React.useState("");
     const [name, setName] = React.useState("");
     const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
     const [role, setRole] = React.useState("user");
     const [id, setId] = React.useState(0);
 
@@ -90,7 +91,12 @@ export default function Usuarios() {
                 setUsers(response.data)
                 setLoading(false)
                 setName("")
-                setDescription("")
+                setCpf("")
+                setEmail("")
+                setRole("")
+                setError("")
+                setSearch("")
+
             } else {
                 setError('Erro inesperado, tente novamente em alguns minutos!')
             }
@@ -101,7 +107,16 @@ export default function Usuarios() {
                     localStorage.setItem("token", "")
                     localStorage.setItem("isAuthenticated", 'false')
                     history.push('/')
-                } else {
+                } else if (e.response.status === 400) {
+                    if (data.rule === 'required') {
+                        setError('Preencha todos os campos obrigatórios')
+                    }else if(data.rule === 'CPF') {
+                        setError('CPF Inválido')
+                    }else {
+                        setError(data.error)
+                    }
+                }
+                else {
                     setError('Erro inesperado, tente novamente em alguns minutos!')
                 }
             } else {
@@ -113,24 +128,6 @@ export default function Usuarios() {
             setLoading(false)
         }
 
-    }
-
-    function onChangeDescription(e: any) {
-        setDescription(e.target.value);
-        if (e.target.value && name !== "") {
-            setDisabled(false)
-        } else {
-            setDisabled(true)
-        }
-    }
-
-    function onChangeName(e: any) {
-        setName(e.target.value);
-        if (e.target.value !== "" && description !== "") {
-            setDisabled(false)
-        } else {
-            setDisabled(true)
-        }
     }
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -162,9 +159,12 @@ export default function Usuarios() {
     function handleUpdate() {
         setButtonModalIsLoading(true)
         const token = 'Bearer ' + localStorage.getItem('token')
-        api.put(`/competencies/${id}`, {
+        api.put(`/users/${id}`, {
             name,
-            description
+            cpf,
+            email,
+            password,
+            role
         }, {
             headers: {
                 Authorization: token
@@ -180,9 +180,13 @@ export default function Usuarios() {
             })
             setButtonModalIsLoading(false)
             setUsers(data)
-            setName('')
+            setName("")
+            setCpf("")
+            setEmail("")
+            setRole("")
+            setSearch("")
+            setPassword("")
             setId(0)
-            setDescription('')
             onClose()
         }).catch(e => {
             setButtonModalIsLoading(false)
@@ -192,26 +196,40 @@ export default function Usuarios() {
                     localStorage.setItem("isAuthenticated", 'false')
                     history.push('/')
                 }
-            } else {
+            } else if(e.response.status === 400) {
+             
+                if(e.response.data?.field === 'role') {
+                    toast({
+                        title: `Preencha os campos obrigatórios`,
+                        description: "Selecione uma role",
+                        position: "top-right",
+                        status: "success",
+                        duration: 5000,
+                        isClosable: true,
+                    })
+                }else {
                 toast({
                     title: `Erro! ${e.response.status}`,
-                    description: "Erro ao editar competência",
+                    description: "Erro ao editar usuário",
                     position: "top-right",
                     status: "success",
                     duration: 5000,
                     isClosable: true,
                 })
-                onClose()
             }
-
+        }
         })
     }
 
-    function myOnOpen(competencyId: number, name: string, description: string) {
+    function myOnOpen(userId: number, name: string, cpf: string, email: string, role: string) {
         setName(name)
-        setDescription(description)
-        setId(competencyId)
+        setCpf(cpf)
+        setEmail(email)
+        setPassword("")
+        setRole(role)
+        setId(userId)
         onOpen()
+        console.log(userId)
     }
     const onChangeSearch = debounce(async (e) => {
         loadUsers(e.target.value)
@@ -246,7 +264,7 @@ export default function Usuarios() {
                     <HStack width="100%" spacing="5">
                         <FormControl isRequired flex="7">
                             <FormLabel>Nome</FormLabel>
-                            <InputApp value={name} onChange={onChangeName}
+                            <InputApp value={name} onChange={(e) => setName(e.target.value)}
                                 placeholder="Nome do colaborador" />
                         </FormControl>
                         <FormControl flex="3" isRequired>
@@ -264,14 +282,14 @@ export default function Usuarios() {
                     <HStack width="100%" spacing="5">
                         <FormControl isRequired flex="7">
                             <FormLabel>Email (Opcional)</FormLabel>
-                            <InputApp value={name} onChange={onChangeName}
+                            <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Nome da competência" />
                         </FormControl>
                         <FormControl flex="3" isRequired>
                             <FormLabel>Role</FormLabel>
-                            <Select  focusBorderColor={focusBorderColor} colorScheme="green" size='md' onChange={(e) => {
-                                console.log(e.target.value) 
-                                setRole(e.target.value)}}>
+                            <Select focusBorderColor={focusBorderColor} colorScheme="green" size='md' onChange={(e) => {
+                                setRole(e.target.value)
+                            }}>
                                 <option selected value='user'>user</option>
                                 <option value='admin'>admin</option>
                                 <option value='admin-ti'>admin ti</option>
@@ -279,7 +297,7 @@ export default function Usuarios() {
                         </FormControl>
                     </HStack>
                     {error && <Text fontSize={"17"} fontWeight={500} color={colorErrorText} alignSelf="start">{error}</Text>}
-                    <Button isDisabled={disabled} type="submit" onClick={(e) => handleSubmit(e)} isLoading={loading} width="100%" colorScheme="green">Criar</Button>
+                    <Button  type="submit" onClick={(e) => handleSubmit(e)} isLoading={loading} width="100%" colorScheme="green">Criar</Button>
                 </VStack>
                 <Heading>Usuários</Heading>
 
@@ -305,15 +323,19 @@ export default function Usuarios() {
                                 <Text fontWeight="500" textAlign="justify" width="30%">{user.cpf}</Text>
                                 <Text fontWeight="500" textAlign="justify" width="30%">{user.role}</Text>
 
-                                <IconButton aria-label='Search database' colorScheme="green" onClick={() => myOnOpen(user.id, competency.name)} icon={<EditIcon />} />
+                                <IconButton aria-label='Search database' colorScheme="green" onClick={() => myOnOpen(user.id, user.name, user.cpf, user.email, user.role)} icon={<EditIcon />} />
 
 
                             </HStack>
 
                         ))
                     }
-                    <Modal scrollBehavior={"inside"} size="md" onClose={() => {
+                    <Modal scrollBehavior={"inside"} size="2xl" onClose={() => {
                         setName('')
+                        setCpf('')
+                        setEmail('')
+                        setRole('')
+                        setId(0)
                         onClose()
                     }} isOpen={isOpen} isCentered>
                         <ModalOverlay />
@@ -322,13 +344,49 @@ export default function Usuarios() {
                             <ModalCloseButton />
                             <ModalBody padding="6" >
                                 <VStack>
-                                    <FormControl>
-                                        <FormLabel>Nome</FormLabel>
-                                        <Input focusBorderColor={focusBorderColor} value={name} onChange={e => setName(e.target.value)} />
-                                    </FormControl>
-                                    <FormControl>
-                                        <FormLabel>Descrição</FormLabel>
-                                    </FormControl>
+
+                                    <HStack width="100%" spacing="5">
+                                        <FormControl isRequired flex="7">
+                                            <FormLabel>Nome</FormLabel>
+                                            <InputApp value={name} onChange={(e) => setName(e.target.value)}
+                                                placeholder="Nome do colaborador" />
+                                        </FormControl>
+                                        <FormControl flex="3" isRequired>
+                                            <FormLabel>CPF</FormLabel>
+                                            <Input
+                                                focusBorderColor={focusBorderColor}
+                                                as={InputMask} mask="999.999.999-99"
+                                                maskChar={null}
+                                                value={cpf}
+                                                onChange={(e) => setCpf(e.target.value)}
+                                                placeholder="Apenas números" />
+                                        </FormControl>
+                                    </HStack>
+
+                                    <HStack width="100%" spacing="5">
+                                    <FormControl flex="5" isRequired>
+                                            <FormLabel>Senha</FormLabel>
+                                            <InputApp value={password} onChange={(e) => setPassword(e.target.name)}
+                                                placeholder="Deixe em branco se não quiser alterar" />
+                                        </FormControl>
+                                        
+                                        <FormControl flex="5" isRequired>
+                                            <FormLabel>Role</FormLabel>
+                                            <Select defaultValue={role} focusBorderColor={focusBorderColor} colorScheme="green" size='md' onChange={(e) => {
+                                                setRole(e.target.value)
+                                            }}>
+                                                <option>Selecione uma role</option>
+                                                <option value='user'>user</option>
+                                                <option value='admin'>admin</option>
+                                                <option value='admin-ti'>admin ti</option>
+                                            </Select>
+                                        </FormControl>
+                                    </HStack>
+                                    <FormControl isRequired flex="6">
+                                            <FormLabel>Email (Opcional)</FormLabel>
+                                            <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
+                                                placeholder="Nome da competência" />
+                                        </FormControl>
                                 </VStack>
                             </ModalBody>
                             <ModalHeader display="flex" w="100%" justifyContent="flex-end">
