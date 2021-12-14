@@ -60,7 +60,7 @@ export default function Login() {
           if(data.rule === 'required') {
             setError(`O campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} é obrigatório`)
           }else if(data.rule === 'invalid credentials'){
-            setError(`Campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} inválido`)
+            setError(`Campo ${data.field === 'password' ? 'Senha' :data.field.toUpperCase()} incorreto`)
           }
         }else {
             setError('Erro inesperado, tente novamente em alguns minutos!')

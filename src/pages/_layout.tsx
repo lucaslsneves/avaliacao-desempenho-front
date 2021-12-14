@@ -120,7 +120,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
   ];
 
-  if (localStorage.getItem('role') === 'admin' || 'admin-ti') {
+  if (localStorage.getItem('role') === 'admin' ||  localStorage.getItem('role') ===  'admin-ti') {
     LinkItems = [...LinkItems, {
       name: 'Todas Avaliações', icon: FiTrendingUp, onClick: () => {
         history.push('/todas-avaliacoes')
