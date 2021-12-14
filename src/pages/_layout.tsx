@@ -120,7 +120,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
 
   ];
 
-  if (localStorage.getItem('role') === 'admin') {
+  if (localStorage.getItem('role') === 'admin' || 'admin-ti') {
     LinkItems = [...LinkItems, {
       name: 'Todas Avaliações', icon: FiTrendingUp, onClick: () => {
         history.push('/todas-avaliacoes')
@@ -141,12 +141,16 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         history.push('/adicionar-membro')
       }
     },
-    {
+  
+    ]
+  }
+
+  if(localStorage.getItem('role') === 'admin-ti') {
+    LinkItems = [...LinkItems ,   {
       name: 'Usuários', icon: MdPerson, onClick: () => {
         history.push('/usuarios')
       }
-    }
-    ]
+    }]
   }
   const theme = useColorModeValue("light", "dark");
 

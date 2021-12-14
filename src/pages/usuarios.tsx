@@ -58,6 +58,7 @@ export default function Usuarios() {
     const toast = useToast()
 
     const focusBorderColor = useColorModeValue('green.400', 'green.200')
+    const borderBottomColor = useColorModeValue('gray.200', 'gray.600')
 
 
     async function handleSubmit(e) {
@@ -195,15 +196,37 @@ export default function Usuarios() {
                     localStorage.setItem("token", "")
                     localStorage.setItem("isAuthenticated", 'false')
                     history.push('/')
-                }
+                
             } else if(e.response.status === 400) {
+
+                if(e.response.data?.error){
+                    toast({
+                        title: `Campo já utilizado`,
+                        description: e.response.data?.error,
+                        position: "top-right",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                    })
+                }
+               
+               else if(e.response.data?.rule === 'CPF') {
+                    toast({
+                        title: `Campo inválido`,
+                        description: "CPF inválido",
+                        position: "top-right",
+                        status: "error",
+                        duration: 5000,
+                        isClosable: true,
+                    })
+                }   
              
-                if(e.response.data?.field === 'role') {
+               else if(e.response.data?.rule === 'required') {
                     toast({
                         title: `Preencha os campos obrigatórios`,
-                        description: "Selecione uma role",
+                        description: `${e.response.data.message} ${e.response.data.field}`,
                         position: "top-right",
-                        status: "success",
+                        status: "error",
                         duration: 5000,
                         isClosable: true,
                     })
@@ -212,12 +235,13 @@ export default function Usuarios() {
                     title: `Erro! ${e.response.status}`,
                     description: "Erro ao editar usuário",
                     position: "top-right",
-                    status: "success",
+                    status: "error",
                     duration: 5000,
                     isClosable: true,
                 })
             }
         }
+    }
         })
     }
 
@@ -318,7 +342,7 @@ export default function Usuarios() {
 
                         users.data.map(user => (
 
-                            <HStack key={user.id} justifyContent="space-between" width="100%" padding={3} borderBottom="1px solid gray.300" borderBottomColor="gray.200" borderBottomWidth="1px">
+                            <HStack key={user.id} justifyContent="space-between" width="100%" padding={3} borderBottom="1px solid gray.300" borderBottomColor={borderBottomColor} borderBottomWidth="1px">
                                 <Text fontWeight="500" width="40%">{user.name}</Text>
                                 <Text fontWeight="500" textAlign="justify" width="30%">{user.cpf}</Text>
                                 <Text fontWeight="500" textAlign="justify" width="30%">{user.role}</Text>
@@ -366,7 +390,7 @@ export default function Usuarios() {
                                     <HStack width="100%" spacing="5">
                                     <FormControl flex="5" isRequired>
                                             <FormLabel>Senha</FormLabel>
-                                            <InputApp value={password} onChange={(e) => setPassword(e.target.name)}
+                                            <InputApp value={password} onChange={(e) => setPassword(e.target.value)}
                                                 placeholder="Deixe em branco se não quiser alterar" />
                                         </FormControl>
                                         
@@ -375,7 +399,6 @@ export default function Usuarios() {
                                             <Select defaultValue={role} focusBorderColor={focusBorderColor} colorScheme="green" size='md' onChange={(e) => {
                                                 setRole(e.target.value)
                                             }}>
-                                                <option>Selecione uma role</option>
                                                 <option value='user'>user</option>
                                                 <option value='admin'>admin</option>
                                                 <option value='admin-ti'>admin ti</option>

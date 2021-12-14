@@ -1,10 +1,11 @@
 import { useColorModeValue } from '@chakra-ui/color-mode';
-import { VStack, Heading } from '@chakra-ui/layout';
-import { Skeleton } from '@chakra-ui/react';
+import { VStack, Heading  } from '@chakra-ui/layout';
+import { Skeleton,Image } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router';
 import HorizontalCard from '../components/horizontal-card';
 import api from '../services/api';
+import NotAssessments from '../assets/not-assessments-found.svg'
 
 import { format } from 'date-fns'
 
@@ -59,19 +60,27 @@ export default function Dashboard(props) {
     )
   }
 
+  if (assessmentsGroups.length === 0) {
+    return(
+    <VStack spacing={6}>
+      <Heading color={headingColor}>Ops, você ainda não participa de nenhuma avaliação</Heading>
+      <Image paddingTop={8} src={NotAssessments} width="500px" height="500px" />
+    </VStack>)
+  }
+
   if (!isLoaded) {
     return (
       <VStack spacing={6}>
         <Heading color={headingColor}>Minhas Avaliações</Heading>
-        {assessmentsGroups.map(assessmentGroup => 
-        <HorizontalCard 
-          endDate={format(new Date(assessmentGroup.end_date), 'dd/MM/yyyy')} 
-          startDate={format(new Date(assessmentGroup.start_date), 'dd/MM/yyyy')} 
-          name={assessmentGroup.name} key={assessmentGroup.assessment_group_id}
-          handleClick={() => {
-            history.push(`/avaliacoes` , {assessmentGroupName: assessmentGroup.name , id: assessmentGroup.assessment_group_id})
-          }}
-        />)}
+        {assessmentsGroups.map(assessmentGroup =>
+          <HorizontalCard
+            endDate={format(new Date(assessmentGroup.end_date), 'dd/MM/yyyy')}
+            startDate={format(new Date(assessmentGroup.start_date), 'dd/MM/yyyy')}
+            name={assessmentGroup.name} key={assessmentGroup.assessment_group_id}
+            handleClick={() => {
+              history.push(`/avaliacoes`, { assessmentGroupName: assessmentGroup.name, id: assessmentGroup.assessment_group_id })
+            }}
+          />)}
       </VStack>
 
     )
