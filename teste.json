@@ -1,0 +1,170 @@
+[
+    {
+        "key": "HE",
+        "latitude": -13.00606245483987,
+        "longitude": -38.53250363072718,
+        "name": "Hospital Espanhol"
+    },
+    {
+        "key": "UB",
+        "latitude": -12.986426527559454,
+        "longitude": -38.48004708839997,
+        "name": "Upa de Brotas"
+    },
+    {
+        "key": "HMV",
+        "latitude": -12.972019140534108,
+        "longitude": -38.50207894421899,
+        "name": "Hospital Manoel Victorino"
+    },
+    {
+        "key": "SEDE",
+        "latitude": -12.984649771511112,
+        "longitude": -38.45171895716496,
+        "name": "Sede"
+    },
+    {
+        "key": "MMR",
+        "latitude": -23.663387,
+        "longitude": -46.309072,
+        "name": "USF Marcelino Maria Rodrigues"
+    },
+    {
+        "key": "CAF",
+        "latitude": -23.568142,
+        "longitude": -46.323037,
+        "name": "Centro de Abastecimento Farmaceutico"
+    },
+    {
+        "key": "JEU",
+        "latitude": -23.542089,
+        "longitude": -46.308104,
+        "name": "Centro de Abastecimento Farmaceutico"
+    },
+    {
+        "key": "FAT",
+        "latitude": -23.634392,
+        "longitude": -46.326579,
+        "name": "USF VER. Gregório Bonifácio da Silva"
+    },
+    {
+        "key": "IKE",
+        "latitude": -23.620328,
+        "longitude": -46.316757,
+        "name": "USF Maria José Lima Souza"
+    },
+    {
+        "key": "INT",
+        "latitude": -23.546130,
+        "longitude": -46.307771,
+        "name": "Escritório Central"
+    },
+    {
+        "key": "LAG",
+        "latitude": -23.670410,
+        "longitude": -46.344327,
+        "name": "USF Jardim do Lago Suzano"
+    },
+    {
+        "key": "MAI",
+        "latitude": -23.561843,
+        "longitude": -46.287751,
+        "name": "USF Antônio Marques de Carvalho"
+    },
+    {
+        "key": "NAK",
+        "latitude": -23.501417,
+        "longitude": -46.320256,
+        "name": "USF Dr. Eduardo Nakamura"
+    },
+    {
+        "key": "REC",
+        "latitude": -23.659117,
+        "longitude": -46.333820,
+        "name": "USF Recanto São José"
+    },
+    {
+        "key": "REV",
+        "latitude": -23.506581,
+        "longitude": -46.298466,
+        "name": "ESF Maria Inês Pinto dos Santos"
+    },
+    {
+        "key": "SAJ",
+        "latitude": -23.497178,
+        "longitude": -46.278109,
+        "name": "USF Manoel Evangelista Oliveira"
+    },
+    {
+        "key": "SUZ",
+        "latitude": -23.545345,
+        "longitude": -46.332033,
+        "name": "USF Onésia Benedita Miguel"
+    },
+    {
+        "key": "VIL",
+        "latitude": -23.543726,
+        "longitude": -46.295543,
+        "name": "USF Ver. Marsal Lopes Rosa"
+    },
+    {
+        "key": "SAM",
+        "latitude": -23.5511518,
+        "longitude": -46.3037382,
+        "name": "Samu Suzano"
+    },
+    {
+        "key": "BERT",
+        "latitude": -23.8421166,
+        "longitude": -46.1395131,
+        "name": "Bertioga"
+    },
+    {
+        "key": "CRESAMU",
+        "latitude": -23.5167152,
+        "longitude": -46.188528,
+        "name": "Cresamu - Mogi das Cruzes"
+    },
+    {
+        "key": "HCI",
+        "latitude": -18.4212184,
+        "longitude": -49.2229246,
+        "name": "Hospital de Campanha de Itumbiara"
+    },
+    {
+        "key": "HMG",
+        "latitude": -23.7060168,
+        "longitude": -46.7441162,
+        "name": "Hospital Municipal de Guarapiranga"
+    },
+    {
+        "key": "HUGO",
+        "latitude": -16.7114197,
+        "longitude": -49.255861,
+        "name": "HUGO"
+    },
+    {
+        "key": "SACA",
+        "latitude": -23.688475,
+        "longitude": -46.682041,
+        "name": "SACA / HISA"
+    },
+    {
+        "key": "SUZ2",
+        "latitude": -23.688475,
+        "longitude": -46.682041,
+        "name": "SUZANO"
+    },
+    {
+        "key": "UPAFEIRA",
+        "latitude": -23.5286995,
+        "longitude": -46.3396676,
+        "name": "UPA Feira"
+    },
+    {
+        "key": "OROPO",
+        "latitude": -23.5733486,
+        "longitude": -46.2181484,
+        "name": "UPA Oropó"
+    }
+]

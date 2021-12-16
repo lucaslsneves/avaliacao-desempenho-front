@@ -303,7 +303,7 @@ export default function Usuarios() {
                     </HStack>
 
                     <HStack width="100%" spacing="5">
-                        <FormControl isRequired flex="7">
+                        <FormControl  flex="7">
                             <FormLabel>Email (Opcional)</FormLabel>
                             <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
                                 placeholder="Nome da competência" />
@@ -404,7 +404,7 @@ export default function Usuarios() {
                                             </Select>
                                         </FormControl>
                                     </HStack>
-                                    <FormControl isRequired flex="6">
+                                    <FormControl  flex="6">
                                             <FormLabel>Email (Opcional)</FormLabel>
                                             <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
                                                 placeholder="Nome da competência" />
