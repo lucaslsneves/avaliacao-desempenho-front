@@ -44,7 +44,7 @@ export default function TodasEquipes(props) {
                 setContentIsLoading(false)
                 
 
-            }, 1000)
+            })
         }).catch(e => {
             if (e.response) {
                 if (e.response.status === 401) {
