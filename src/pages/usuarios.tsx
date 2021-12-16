@@ -253,7 +253,6 @@ export default function Usuarios() {
         setRole(role)
         setId(userId)
         onOpen()
-        console.log(userId)
     }
     const onChangeSearch = debounce(async (e) => {
         loadUsers(e.target.value)
@@ -388,13 +387,13 @@ export default function Usuarios() {
                                     </HStack>
 
                                     <HStack width="100%" spacing="5">
-                                    <FormControl flex="5" isRequired>
+                                    <FormControl flex="6" isRequired>
                                             <FormLabel>Senha</FormLabel>
                                             <InputApp value={password} onChange={(e) => setPassword(e.target.value)}
                                                 placeholder="Deixe em branco se não quiser alterar" />
                                         </FormControl>
                                         
-                                        <FormControl flex="5" isRequired>
+                                        <FormControl flex="4" isRequired>
                                             <FormLabel>Role</FormLabel>
                                             <Select defaultValue={role} focusBorderColor={focusBorderColor} colorScheme="green" size='md' onChange={(e) => {
                                                 setRole(e.target.value)

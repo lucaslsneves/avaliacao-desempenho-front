@@ -84,7 +84,7 @@ export default function EquipesMembros(props) {
     return (
       <>
         <HStack min-width={"500px"} spacing={12} alignItems="center" justifyContent="space-between" spacing="4" paddingX="16">
-          <Heading size="lg" marginTop={3} color={headingColor}> {location.state.teamName}</Heading>
+          <Heading size="lg" marginTop={3} color={headingColor}>Minhas avaliações - {localStorage.getItem('user_name')}</Heading>
           <HStack display="inline-flex">
             <Button cursor="pointer" onClick={() => setIsTable(!isTable)} variant="outline" leftIcon={<VscGraph />} colorScheme="green">
               Avaliações
