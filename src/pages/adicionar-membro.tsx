@@ -10,16 +10,13 @@ import {
   Button,
   Heading,
   Box,
-  toast,
   Input,
   useToast,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  IconButton,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberDecrementStepper,
+  NumberIncrementStepper
 
 } from '@chakra-ui/react'
 import { FaEyeSlash, FaEye } from "react-icons/fa"
@@ -45,7 +42,7 @@ export default function AdicionarMembro() {
   const [members, setMembers] = React.useState(null);
   const [name, setName] = React.useState("");
   const [registration, setRegistration] = React.useState("");
-  const [hierarchy, setHierarchy] = React.useState("");
+  const [hierarchy, setHierarchy] = React.useState(0);
   const [cpf, setCpf] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [role, setRole] = React.useState("");
@@ -173,6 +170,8 @@ export default function AdicionarMembro() {
         } else if (e.response.status === 400) {
           if (data.rule === 'required') {
             setError('Preencha todos os campos obrigatórios')
+          } else {
+            setError(e.response.data.error)
           }
         }
       } else {
@@ -208,7 +207,16 @@ export default function AdicionarMembro() {
             </FormControl>
             <FormControl isRequired flex="2.5">
               <FormLabel>Hierarquia</FormLabel>
-              <InputApp type="number" value={hierarchy} onChange={(e) => setHierarchy(e.target.value)} placeholder="Hierarquia do colaborador" />
+              <NumberInput focusBorderColor={focusBorderColor} value={hierarchy} onChange={(value) => {
+                setHierarchy(value)
+              }} placeholder="Hierarquia do colaborador" step={1} defaultValue={0} min={0} max={10}>
+                <NumberInputField />
+                <NumberInputStepper>
+                  <NumberIncrementStepper />
+                  <NumberDecrementStepper />
+                </NumberInputStepper>
+              </NumberInput>
+
             </FormControl>
           </HStack>
 

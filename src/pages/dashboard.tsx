@@ -63,7 +63,7 @@ export default function Dashboard(props) {
   if (assessmentsGroups.length === 0) {
     return(
     <VStack spacing={6}>
-      <Heading color={headingColor}>Ops, você ainda não participa de nenhuma avaliação</Heading>
+      <Heading fontSize={"2xl"} color={headingColor}>Ops, você ainda não participa de nenhuma avaliação</Heading>
       <Image paddingTop={8} src={NotAssessments} width="500px" height="500px" />
     </VStack>)
   }
