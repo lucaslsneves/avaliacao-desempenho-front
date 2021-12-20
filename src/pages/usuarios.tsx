@@ -10,7 +10,6 @@ import {
     Heading,
     IconButton,
     useToast,
-    Textarea,
     Skeleton,
     Input,
     Modal,
@@ -19,8 +18,6 @@ import {
     ModalHeader,
     ModalCloseButton,
     useDisclosure,
-    Switch,
-    Stack,
     Select
 } from '@chakra-ui/react'
 
@@ -36,7 +33,6 @@ import { EditIcon } from '@chakra-ui/icons'
 import { debounce } from 'lodash';
 
 export default function Usuarios() {
-    const [disabled, setDisabled] = React.useState(true);
     const [error, setError] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [buttonIsLoading, setButtonIsLoading] = React.useState(false);
