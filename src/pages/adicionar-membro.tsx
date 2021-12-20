@@ -270,7 +270,6 @@ export default function AdicionarMembro() {
               options={optionsTeams}
               placeholder="Selecione o unidade do colaborador"
               onChange={(e) => {
-                console.log(e)
                 setTeam(e)
               }}
             />
