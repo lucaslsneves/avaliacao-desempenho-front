@@ -49,7 +49,7 @@ export default function AdicionarMembro() {
   const [members, setMembers] = React.useState<{ data: Array<any>, meta: {} }>({ data: [], meta: {} });
   const [name, setName] = React.useState("");
   const [registration, setRegistration] = React.useState("");
-  const [hierarchy, setHierarchy] = React.useState(0);
+  const [hierarchy, setHierarchy] = React.useState("0");
   const [cpf, setCpf] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [role, setRole] = React.useState("");
@@ -64,6 +64,7 @@ export default function AdicionarMembro() {
   const [buttonModalIsLoading, setButtonModalIsLoading] = React.useState(false);
   const [loadingMembers, setLoadingMembers] = React.useState(false);
 
+  const borderBottomColor = useColorModeValue('gray.200', 'gray.600')
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -144,12 +145,14 @@ export default function AdicionarMembro() {
   React.useEffect(() => {
     setTeam({})
     setOptionsTeams([])
+    console.log(assessment.value)
     const token = 'Bearer ' + localStorage.getItem('token')
     api.get(`/assessments/teams/${assessment.value}`, {
       headers: {
         Authorization: token
       }
     }).then(({ data }) => {
+      console.log(data)
       setOptionsTeams([...data.data.map(team => ({ label: `${team.unity} - ${team.area}`, value: team.id }))])
     }).catch((e) => {
       if (e.response) {
@@ -242,6 +245,119 @@ export default function AdicionarMembro() {
     }
 
   }
+
+  function handleUpdate() {
+    setButtonModalIsLoading(true)
+    const token = 'Bearer ' + localStorage.getItem('token')
+    api.put(`/users/${id}`, {
+      name,
+      cpf,
+      email,
+      password,
+      role
+    }, {
+      headers: {
+        Authorization: token
+      }
+    }).then(({ data }) => {
+      toast({
+        title: "Sucesso!",
+        description: "Competência atualizada",
+        position: "top-right",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      })
+      setButtonModalIsLoading(false)
+      setUsers(data)
+      setName("")
+      setCpf("")
+      setEmail("")
+      setRole("")
+      setSearch("")
+      setPassword("")
+      setId(0)
+      onClose()
+    }).catch(e => {
+      setButtonModalIsLoading(false)
+      if (e.response) {
+        if (e.response.status === 401) {
+          localStorage.setItem("token", "")
+          localStorage.setItem("isAuthenticated", 'false')
+          history.push('/')
+
+        } else if (e.response.status === 400) {
+
+          if (e.response.data?.error) {
+            toast({
+              title: `Campo já utilizado`,
+              description: e.response.data?.error,
+              position: "top-right",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            })
+          }
+
+          else if (e.response.data?.rule === 'CPF') {
+            toast({
+              title: `Campo inválido`,
+              description: "CPF inválido",
+              position: "top-right",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            })
+          }
+
+          else if (e.response.data?.rule === 'required') {
+            toast({
+              title: `Preencha os campos obrigatórios`,
+              description: `${e.response.data.message} ${e.response.data.field}`,
+              position: "top-right",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            })
+          } else {
+            toast({
+              title: `Erro! ${e.response.status}`,
+              description: "Erro ao editar usuário",
+              position: "top-right",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            })
+          }
+        }
+      }
+    })
+  }
+
+  function myOnOpen(memberId: number,
+    name:string,
+    cpf: string,
+    email:string,
+    hierarchy: string,
+    registration: string,
+    role: string,
+    roleNumber: string,
+    assessment: {},
+    team: {}
+    ) {
+    setHierarchy(hierarchy)
+    setName(name)
+    setCpf(cpf)
+    setEmail(email)
+    setRegistration(registration)
+    setAssessment(assessment)
+    setTeam(team)
+    setRole(role)
+    setRoleNumber(roleNumber)
+    setId(memberId)
+    onOpen()
+  }
+
 
   const focusBorderColor = useColorModeValue('green.400', 'green.200')
   if (loadingMembers) {
@@ -352,7 +468,17 @@ export default function AdicionarMembro() {
           <Button type="submit" onClick={(e) => handleSubmit(e)} isLoading={loading} width="100%" colorScheme="green">Entrar</Button>
         </VStack>
 
-        <Heading>Membros</Heading>
+       
+
+      </VStack>
+    </>
+  )
+}
+
+
+/**
+ * 
+ *  <Heading>Membros</Heading>
         <HStack width="45%" minW="600px" justifyContent="space-between" alignItems="center">
           <Input width="300px" focusBorderColor={focusBorderColor} onChange={onChangeSearch} placeholder="Buscar" />
           <HStack>
@@ -365,29 +491,52 @@ export default function AdicionarMembro() {
         </HStack>
 
         <VStack rounded="lg" shadow="lg" padding={8} width={"80%"} maxWidth="1280px" bg={bgColor}>
-
+          <HStack justifyContent="space-between" width="100%" padding={3} borderBottom="1px solid gray.300" borderBottomColor={borderBottomColor} borderBottomWidth="1px">
+            <Text width="25%" fontWeight="900">Nome</Text>
+            <Text width="16.75%" fontWeight="900" textAlign="justify">CPF</Text>
+            <Text width="16.75%" fontWeight="900" textAlign="justify">Equipe</Text>
+            <Text width="16.75%" fontWeight="900" textAlign="justify">Unidade</Text>
+            <Text width="16.75%" fontWeight="900" textAlign="justify">Avaliação</Text>
+            <Text width="8%" fontWeight="900" textAlign="end">Editar</Text>
+          </HStack>
           {
 
-            members.data.map(user => (
+            members.data.map(member => (
 
-              <HStack key={user.id} justifyContent="space-between" width="100%" padding={3} borderBottom="1px solid gray.300" borderBottomColor={borderBottomColor} borderBottomWidth="1px">
-                <Text fontWeight="500" width="40%">{user.name}</Text>
-                <Text fontWeight="500" textAlign="justify" width="30%">{user.cpf}</Text>
-                <Text fontWeight="500" textAlign="justify" width="30%">{user.role}</Text>
+              <HStack key={member.member_id} justifyContent="space-between" width="100%" padding={3} borderBottom="1px solid gray.300" borderBottomColor={borderBottomColor} borderBottomWidth="1px">
+                <Text fontWeight="500" width="25%">{member.name}</Text>
+                <Text fontWeight="500" width="16.75%" textAlign="justify" >{member.cpf}</Text>
+                <Text fontWeight="500" width="16.75%" textAlign="justify" >{member.area}</Text>
+                <Text fontWeight="500" width="16.75%" textAlign="justify" >{member.unity}</Text>
+                <Text fontWeight="500" width="16.75%" textAlign="justify" >{member.assessment_group_name}</Text>
 
-                <IconButton aria-label='Search database' colorScheme="green" onClick={() => myOnOpen(user.id, user.name, user.cpf, user.email, user.role)} icon={<EditIcon />} />
-
+                <Box width="8%" textAlign="right">
+                  <IconButton aria-label='Search database' colorScheme="green" onClick={() => myOnOpen(
+                    member.id,
+                    member.name,
+                    member.cpf,
+                    member.email,
+                    member.hierarchy,
+                    member.registration,
+                    member.role,
+                    member.role_number,
+                    {value: member.assessment_group_id, label: member.assessment_group_name},
+                    {value: member.team_id, label: `${member.unity} - ${member.area}`}
+                  )} icon={<EditIcon />} />
+                </Box>
 
               </HStack>
 
             ))
           }
-          <Modal scrollBehavior={"inside"} size="2xl" onClose={() => {
+
+          <Modal scrollBehavior={"inside"} size="4xl" onClose={() => {
             setName('')
             setCpf('')
             setEmail('')
             setRole('')
             setId(0)
+            setAssessment(1)
             onClose()
           }} isOpen={isOpen} isCentered>
             <ModalOverlay />
@@ -395,17 +544,39 @@ export default function AdicionarMembro() {
               <ModalHeader>{name}</ModalHeader>
               <ModalCloseButton />
               <ModalBody padding="6" >
-                <VStack>
+                <VStack padding={8}
+                  as="form"
+                  bg={bgColor}
+                  spacing={6} width={"100%"} >
+                  <HStack width="100%" spacing="5">
+                    <FormControl isRequired flex="5">
+                      <FormLabel>Nome</FormLabel>
+                      <InputApp disabled={true} value={name} onChange={(e) => setName(e.target.value.toUpperCase())} placeholder="Nome do colaborador" />
+                    </FormControl>
+                    <FormControl isRequired flex="2.5">
+                      <FormLabel>Chapa</FormLabel>
+                      <InputApp type="number" value={registration} onChange={(e) => setRegistration(e.target.value)} placeholder="Matrícula do colaborador" />
+                    </FormControl>
+                    <FormControl isRequired flex="2.5">
+                      <FormLabel>Hierarquia</FormLabel>
+                      <NumberInput focusBorderColor={focusBorderColor} value={hierarchy} onChange={(value) => {
+                        setHierarchy(value)
+                      }} placeholder="Hierarquia do colaborador" step={1}  min={0} max={10}>
+                        <NumberInputField />
+                        <NumberInputStepper>
+                          <NumberIncrementStepper />
+                          <NumberDecrementStepper />
+                        </NumberInputStepper>
+                      </NumberInput>
+
+                    </FormControl>
+                  </HStack>
 
                   <HStack width="100%" spacing="5">
-                    <FormControl isRequired flex="7">
-                      <FormLabel>Nome</FormLabel>
-                      <InputApp value={name} onChange={(e) => setName(e.target.value)}
-                        placeholder="Nome do colaborador" />
-                    </FormControl>
                     <FormControl flex="3" isRequired>
                       <FormLabel>CPF</FormLabel>
                       <Input
+                      disabled={true}
                         focusBorderColor={focusBorderColor}
                         as={InputMask} mask="999.999.999-99"
                         maskChar={null}
@@ -413,31 +584,53 @@ export default function AdicionarMembro() {
                         onChange={(e) => setCpf(e.target.value)}
                         placeholder="Apenas números" />
                     </FormControl>
+
+                    <FormControl flex="7">
+                      <FormLabel>Email (Opcional)</FormLabel>
+                      <InputApp disabled={true} value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
+                    </FormControl>
                   </HStack>
+
 
                   <HStack width="100%" spacing="5">
                     <FormControl flex="6" isRequired>
-                      <FormLabel>Senha</FormLabel>
-                      <InputApp value={password} onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Deixe em branco se não quiser alterar" />
+                      <FormLabel>Cargo</FormLabel>
+                      <InputApp value={role} onChange={(e) => setRole(e.target.value.toUpperCase())} placeholder="Função do colaborador - Ex: Analista de RH PL" />
                     </FormControl>
 
-                    <FormControl flex="4" isRequired>
-                      <FormLabel>Role</FormLabel>
-                      <Select defaultValue={role} focusBorderColor={focusBorderColor} colorScheme="green" size='md' onChange={(e) => {
-                        setRole(e.target.value)
-                      }}>
-                        <option value='user'>user</option>
-                        <option value='admin'>admin</option>
-                        <option value='admin-ti'>admin ti</option>
-                      </Select>
+                    <FormControl flex="4">
+                      <FormLabel>Código da Função No RM (Opcional)</FormLabel>
+                      <InputApp value={roleNumber} onChange={(e) => setRoleNumber(e.target.value)} placeholder="N° Função do colaborador no RM" />
                     </FormControl>
                   </HStack>
-                  <FormControl flex="6">
-                    <FormLabel>Email (Opcional)</FormLabel>
-                    <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Nome da competência" />
-                  </FormControl>
+
+
+
+                  <Heading fontSize="md" fontWeight="500" width="100%">Avaliação de desempenho</Heading>
+                  <Box width="100%">
+                    <Select
+                      value={assessment}
+                      key={assessment?.value}
+                      options={optionsAssessments}
+                      placeholder="Selecione as competências"
+                      onChange={(e) => {
+                        setAssessment(e)
+                      }}
+                    />
+                  </Box>
+
+                  <Box width="100%">
+                    <Heading mb="5" fontSize="md" fontWeight="500">Equipe</Heading>
+                    <Select
+                      value={team}
+                      key={team?.value}
+                      options={optionsTeams}
+                      placeholder="Selecione o unidade do colaborador"
+                      onChange={(e) => {
+                        setTeam(e)
+                      }}
+                    />
+                  </Box>
                 </VStack>
               </ModalBody>
               <ModalHeader display="flex" w="100%" justifyContent="flex-end">
@@ -446,9 +639,8 @@ export default function AdicionarMembro() {
             </ModalContent>
           </Modal>
 
-        </VStack >
 
-      </VStack>
-    </>
-  )
-}
+        </VStack >
+ * 
+ * 
+ */
