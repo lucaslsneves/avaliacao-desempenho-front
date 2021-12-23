@@ -302,7 +302,7 @@ export default function Usuarios() {
                         <FormControl  flex="7">
                             <FormLabel>Email (Opcional)</FormLabel>
                             <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Nome da competência" />
+                                placeholder="Nome do usuário" />
                         </FormControl>
                         <FormControl flex="3" isRequired>
                             <FormLabel>Role</FormLabel>
@@ -403,7 +403,7 @@ export default function Usuarios() {
                                     <FormControl  flex="6">
                                             <FormLabel>Email (Opcional)</FormLabel>
                                             <InputApp value={email} onChange={(e) => setEmail(e.target.value)}
-                                                placeholder="Nome da competência" />
+                                                placeholder="Email do usuário" />
                                         </FormControl>
                                 </VStack>
                             </ModalBody>
