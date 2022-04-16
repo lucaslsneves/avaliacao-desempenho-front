@@ -1,19 +1,16 @@
-import { HStack, Text,Skeleton, Table, Input, Box, Tbody, Td, Th, Thead, Tooltip, Tr,useColorModeValue, useDisclosure, Heading, Grid, VStack, IconButton } from "@chakra-ui/react"
-import React, { useEffect, useMemo } from "react"
-import api from "../services/api";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import { Box, Grid, Heading, HStack, Skeleton, Table, Tbody, Td, Text, Th, Thead, Tr, VStack } from "@chakra-ui/react";
+import React, { useEffect, useMemo } from "react";
+import { CSVLink } from "react-csv";
 import { useHistory } from "react-router-dom";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
-import { useTable, useSortBy, useGlobalFilter } from "react-table"
-import { CSVLink } from "react-csv"
+import { useSortBy, useTable } from "react-table";
+import api from "../services/api";
 
-import { MdFileDownload } from 'react-icons/md'
-
-export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamUnity="Unidade"}) {
+export default function TableMyGrades({ teamId = 0 }) {
   const [isLoaded, setIsLoaded] = React.useState(true)
   const [error, setError] = React.useState(false)
-  const [buttonIsLoading, setButtonIsLoading] = React.useState(false)
   const [grades, setGrades] = React.useState([])
-  
+
   const [averages, setAverages] = React.useState([])
   const [overall, setOverall] = React.useState(0)
 
@@ -21,7 +18,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
 
   useEffect(() => {
     const token = 'Bearer ' + localStorage.getItem('token')
-    api.get(`/team/grades/admin?team=${teamId}`, {
+    api.get(`/teams/members/grades/collaborator?team=${teamId}`, {
       headers: {
         Authorization: token
       }
@@ -54,6 +51,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
       }
     })
 
+
   }, [])
 
   const columns = useMemo(() => [
@@ -62,12 +60,12 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
       accessor: "mananger_name",
     },
     {
-      Header: "Cargo Gestor",
+      Header: "Cargo",
       accessor: "mananger_role",
     },
     {
-      Header: "Colaborador",
-      accessor: "collaborator_name",
+      Header: "Chapa",
+      accessor: "mananger_registration",
     },
     {
       Header: "Competência",
@@ -81,35 +79,8 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
       Header: "Justificativa",
       accessor: "justification",
     },
-    {
-      Header: "Relatório",
-      accessor: "pdf",
-    },
   ], [])
 
-  async function generatePdf(teamId,collaboratorId) {
-    setButtonIsLoading(true)
-    try {
-      const token = 'Bearer ' + localStorage.getItem('token')
-      const response = await api.get(`http://localhost:3333/grades/member-pdf?team=${teamId}&member=${collaboratorId}`
-        ,
-        {
-          responseType: 'blob', headers: {
-            Authorization: token
-          }
-        })
-      const file = new Blob(
-        [response.data],
-        { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      window.open(fileURL);
-
-
-      setButtonIsLoading(false)
-    } catch (e) {
-      setButtonIsLoading(false)
-    }
-  }
   const data = useMemo(() => [...grades], [grades])
 
 
@@ -119,12 +90,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
     headerGroups,
     rows,
     prepareRow,
-    state,
-    setGlobalFilter
-  } = useTable({ columns, data } , useGlobalFilter, useSortBy)
-
-  const {globalFilter} = state
-  const focusBorderColor = useColorModeValue("green.400", "green.200")
+  } = useTable({ columns, data }, useSortBy)
 
   if (isLoaded) {
     return (
@@ -142,7 +108,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
   return (
     <>
       <HStack alignItems="center" justifyContent="space-between" mt="4" pr="20">
-        <Heading fontSize="3xl" pl="10" >{`${teamUnity} - ${teamArea}`}</Heading>
+        <Heading fontSize="3xl" pl="10" >{`${grades[0]?.collaborator_name || ""} - ${grades[0]?.collaborator_role || ""}`}</Heading>
         <Box cursor="pointer" borderRadius="lg" padding="2" display="inline-flex" bgColor="green.400" color="white">
           <CSVLink filename={"relatorio-avaliacao.csv"} data={data} headers={columns.map((column => ({ key: column.accessor, label: column.Header })))}>
             Exportar Excel
@@ -150,8 +116,7 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
         </Box>
       </HStack>
       <Heading fontWeight="500" textAlign="center" mt="10">Médias</Heading>
-      
-      <Grid mt="6" justifyItems="center" width="100%" templateColumns="repeat(3, 1fr)" gap={4}>
+      <Grid mt="6" justifyItems="center" width="100%" templateColumns="repeat(3, 1fr)" gap={8}>
         <VStack spacing="3" >
             <Text fontSize="lg" fontWeight="500">
               Média Geral
@@ -166,15 +131,12 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
              {average.name}
            </Text>
            <Text fontSize="lg" fontWeight="700">
-             {average.average?.toFixed(1) || "0.0" } %
+             {average.average?.toFixed(1)}%
            </Text>
        </VStack>
         ))}
       </Grid>
       <Heading fontWeight="500" textAlign="center" mt="10">Notas</Heading>
-      <HStack justifyContent="center">
-      <Input mt="3" focusBorderColor={focusBorderColor} maxWidth="300px" placeHolder="Filtrar" value={globalFilter} onChange={(e) => setGlobalFilter(e.target.value)}></Input>
-      </HStack>
       <Table mt="6" {...getTableProps()}>
         <Thead>
           {headerGroups.map((headerGroup) => (
@@ -204,22 +166,11 @@ export default function TableAllGrades({ teamId = 0 , teamArea = "Setor" , teamU
             prepareRow(row)
             return (
               <Tr {...row.getRowProps()}>
-                {row.cells.map((cell) => {
-                  return (
-                    <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
-                      {cell.column.Header === "Relatório" ? <Tooltip label={"Baixar Relatório do colaborador"} placement="top-start" >
-              <IconButton
-                isLoading={buttonIsLoading}
-                onClick={() => generatePdf(cell.row.original.team_id,cell.row.original.collaborator_id)}
-                colorScheme="green"
-                aria-label="Baixar PDF"
-                icon={<MdFileDownload />}
-                size="sm"
-              />
-            </Tooltip> : cell.render("Cell")}
-                    </Td>
-                  )
-                })}
+                {row.cells.map((cell) => (
+                  <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
+                    {cell.render("Cell")}
+                  </Td>
+                ))}
               </Tr>
             )
           })}

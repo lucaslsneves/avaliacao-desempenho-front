@@ -1,4 +1,4 @@
-import { HStack, Heading, useColorModeValue, VStack, Button } from '@chakra-ui/react'
+import { Button, Heading, HStack, useColorModeValue, VStack } from '@chakra-ui/react'
 import React from 'react'
 import { FaArrowRight } from 'react-icons/fa'
 export default function TeamHorizontalCardAdmin({
@@ -8,7 +8,7 @@ export default function TeamHorizontalCardAdmin({
   unity = "",
   unityNumber = "",
   buttonTitle = "Acessar"
-}: any) {
+}) {
   const textColor = useColorModeValue("white", "gray.600")
   const bgColor1 = useColorModeValue("white", "gray.700")
   const bgColor2 = useColorModeValue("green.400", "green.200")

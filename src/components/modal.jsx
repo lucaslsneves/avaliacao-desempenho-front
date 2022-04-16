@@ -1,23 +1,7 @@
-import { FormControl, FormLabel, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Tooltip, useDisclosure } from "@chakra-ui/react"
-import React, { useEffect } from "react"
-import {
-  Modal,
-  ModalOverlay,
-  ModalHeader,
-  ModalBody,
-  useColorModeValue,
-  ModalFooter,
-  Button,
-  ModalContent,
-  ModalCloseButton,
-  Textarea,
-  Text,
-  VStack,
-  Skeleton,
-  useToast
-} from '@chakra-ui/react';
-import api from "../services/api";
+import { Button, FormControl, FormLabel, HStack, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Skeleton, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text, Textarea, useColorModeValue, useDisclosure, useToast, VStack } from "@chakra-ui/react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import api from "../services/api";
 
 export default function MyModal({ title = "Modal", assessmentId = 0, requestBody, availableToSee = false , availableToAnswer = false , manager=false }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,7 +16,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
 
   const history = useHistory()
   const toast = useToast()
-  function handleChangeSlider(value: number, competencyIndex: number) {
+  function handleChangeSlider(value, competencyIndex) {
     const newCompetencies = [...competencies];
     newCompetencies[competencyIndex].value = value
     let sum = 0;
@@ -41,7 +25,7 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
     setCompetencies(newCompetencies)
   }
 
-  function handleOnChangeTextArea(value: string, competencyIndex: number) {
+  function handleOnChangeTextArea(value, competencyIndex) {
     const newCompetencies = [...competencies];
     newCompetencies[competencyIndex].justification = value
     setCompetencies(newCompetencies)
@@ -60,12 +44,12 @@ export default function MyModal({ title = "Modal", assessmentId = 0, requestBody
             Authorization: token
           }
         }).then((grades) => {
-          const gradesMap: any = {}
-          grades.data.forEach((grade : any) => {
+          const gradesMap = {}
+          grades.data.forEach((grade) => {
             gradesMap[grade.competency_id] = {value: grade.grade , justification: grade.justification}
           }) 
 
-          let newCompetencies = response.data.map((competency : any) => {
+          let newCompetencies = response.data.map((competency) => {
             competency.value = gradesMap[competency.competency_id].value
             competency.justification = gradesMap[competency.competency_id].justification
             return competency

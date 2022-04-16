@@ -1,22 +1,12 @@
 import {
-  Heading,
   Avatar,
-  Box,
-  VStack,
-  Flex,
-  Text,
-  Stack,
-  useColorModeValue,
-  Tag,
+  Box, Flex, Heading, HStack, IconButton, Stack, Tag,
   TagLabel,
-  TagLeftIcon,
-  IconButton,
-  Tooltip,
-  HStack,
+  TagLeftIcon, Text, Tooltip, useColorModeValue, VStack
 } from '@chakra-ui/react';
-import React from 'react'
-import { FaCheck } from 'react-icons/fa'
-import { MdFileDownload } from 'react-icons/md'
+import React from 'react';
+import { FaCheck } from 'react-icons/fa';
+import { MdFileDownload } from 'react-icons/md';
 import api from '../services/api';
 import MyModal from './modal';
 
@@ -31,7 +21,6 @@ export default function UserCard({
   handleClick = () => { },
   assessmentId = 0
 }) {
-  const iconColor = useColorModeValue("white", "gray.800");
 
   async function generatePdf() {
     setButtonIsLoading(true)

@@ -1,6 +1,6 @@
-import { HStack, Heading, Text, useColorModeValue, VStack, Tag, TagLeftIcon, TagLabel } from '@chakra-ui/react'
-import React from 'react'
-import { FaLock } from 'react-icons/fa'
+import { Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
+import React from "react";
+import { FaLock } from "react-icons/fa";
 
 export function TagLock() {
   return (
@@ -8,5 +8,5 @@ export function TagLock() {
       <TagLeftIcon boxSize="12px" as={FaLock} />
       <TagLabel>Indisponível</TagLabel>
     </Tag>
-  )
+  );
 }

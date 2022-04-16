@@ -1,43 +1,14 @@
-import { FormControl, FormLabel, HStack, Slider, SliderFilledTrack, SliderThumb, SliderTrack, Tooltip, useDisclosure } from "@chakra-ui/react"
-import React, { useEffect } from "react"
+import { Box, Button, Heading, HStack, IconButton, Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Skeleton, Tag, Text, Tooltip, useDisclosure, VStack } from "@chakra-ui/react";
+import { Page } from '@react-pdf/renderer';
 import {
-  Modal,
-  ModalOverlay,
-  ModalHeader,
-  ModalBody,
-  useColorModeValue,
-  ModalFooter,
-  Button,
-  ModalContent,
-  ModalCloseButton,
-  Textarea,
-  Heading,
-  Box,
-  Text,
-  VStack,
-  Skeleton,
-  useToast,
-  IconButton,
-  Tag,
-  TagLabel
-} from '@chakra-ui/react';
-import { MdFileDownload } from 'react-icons/md'
-import { Radar } from 'react-chartjs-2';
-import api from "../services/api";
-import { useHistory } from "react-router-dom";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import {
-  Chart as ChartJS,
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip as Tooltip2,
-  Legend,
+  Chart as ChartJS, Filler, Legend, LineElement, PointElement, RadialLinearScale, Tooltip as Tooltip2
 } from 'chart.js';
-import { Page, Text as TextPDF, View, Document, StyleSheet } from '@react-pdf/renderer';
-import ReactPDF from '@react-pdf/renderer';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
+import React from "react";
+import { Radar } from 'react-chartjs-2';
+import { MdFileDownload } from 'react-icons/md';
+import api from "../services/api";
 
 ChartJS.register(
   RadialLinearScale,
@@ -52,26 +23,7 @@ export default function ModalCollaboratorPDF({ title = "Relatório Individual", 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = React.useState(true)
   const [isLoadedButton, setIsLoadedButton] = React.useState(false)
-  const [error, setError] = React.useState(false)
   const [grades, setGrades] = React.useState({})
-
-  const focusColor = useColorModeValue('green.400', 'green.200')
-
-  const history = useHistory()
-  const toast = useToast()
-  function handleChangeSlider(value: number, competencyIndex: number) {
-    const newCompetencies = [...competencies];
-    newCompetencies[competencyIndex].value = value
-    console.log(newCompetencies)
-    setCompetencies(newCompetencies)
-  }
-
-  function handleOnChangeTextArea(value: string, competencyIndex: number) {
-    const newCompetencies = [...competencies];
-    newCompetencies[competencyIndex].justification = value
-    console.log(newCompetencies)
-    setCompetencies(newCompetencies)
-  }
 
   function handleOpen() {
     setIsLoading(true)

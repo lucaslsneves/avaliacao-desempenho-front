@@ -1,4 +1,4 @@
-import { HStack, Heading, Text, useColorModeValue, VStack, Tag, TagLabel, Button } from '@chakra-ui/react'
+import { Button, Heading, HStack, Tag, TagLabel, Text, useColorModeValue, VStack } from '@chakra-ui/react'
 import React from 'react'
 import { FaArrowRight } from 'react-icons/fa'
 import { TagLock } from './tag-lock'
@@ -13,7 +13,7 @@ export default function TeamHorizontalCard({
   isCollaborator = false,
   manager = false,
   manangers = []
-}: any) {
+}) {
   const textColor = useColorModeValue("white", "gray.600")
   const bgColor1 = useColorModeValue("white", "gray.700")
   const bgColor2 = useColorModeValue("green.400", "green.200")
