@@ -84,32 +84,12 @@ export default function TableAllGrades({
   const columns = useMemo(
     () => [
       {
-        Header: "Gestor",
-        accessor: "mananger_name",
+        Header: "Nome",
+        accessor: "name",
       },
       {
-        Header: "Cargo Gestor",
-        accessor: "mananger_role",
-      },
-      {
-        Header: "Colaborador",
-        accessor: "collaborator_name",
-      },
-      {
-        Header: "Competência",
-        accessor: "competency",
-      },
-      {
-        Header: "Nota",
+        Header: "Média",
         accessor: "grade",
-      },
-      {
-        Header: "Justificativa",
-        accessor: "justification",
-      },
-      {
-        Header: "Relatório",
-        accessor: "pdf",
       },
     ],
     []
