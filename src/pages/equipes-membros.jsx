@@ -257,7 +257,7 @@ export default function EquipesMembros(props) {
         if (response.data.statusAlreadyExists[0].status === "finalizado") {
           setIsListView(false);
         }
-        if (response.data?.feedbackAlreadyExists) {
+        if (response.data?.feedbackAlreadyExists.length !== 0) {
           setFeedback(true);
         }
         setStatus(response.data.statusAlreadyExists[0].status);
