@@ -1,9 +1,16 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Heading, HStack, Text, VStack } from "@chakra-ui/layout";
-import { Button, Input, Skeleton, Spinner } from "@chakra-ui/react";
+import {
+  Button,
+  Input,
+  InputGroup,
+  InputLeftElement,
+  Skeleton,
+  Spinner,
+} from "@chakra-ui/react";
 import React, { useEffect } from "react";
-import { MdArrowBack, MdArrowForward } from "react-icons/md";
+import { MdArrowBack, MdArrowForward, MdOutlineSearch } from "react-icons/md";
 import { useHistory } from "react-router";
 import api from "../services/api";
 
@@ -16,7 +23,8 @@ export default function TodasEquipes(props) {
   const [isLoaded, setIsLoaded] = React.useState(true);
   const [contentIsLoading, setContentIsLoading] = React.useState(true);
   const [error, setError] = React.useState(false);
-  const [filter, setFilter] = React.useState("");
+  const [unity, setUnity] = React.useState("");
+  const [area, setArea] = React.useState("");
   const [buttonIsLoading, setButtonIsLoading] = React.useState(false);
 
   const history = useHistory();
@@ -25,17 +33,22 @@ export default function TodasEquipes(props) {
   const focusBorder = useColorModeValue("green.400", "green.200");
   const headingColor = useColorModeValue("gray.700", "white");
 
-  const onChangeSearch = debounce(async (e) => {
-    loadTeams(e.target.value);
-    setFilter(e.target.value);
+  const onChangeUnity = debounce(async (e) => {
+    loadTeams(area, e.target.value);
+    setUnity(e.target.value);
   }, 700);
 
-  function loadTeams(filter = "", page = 1) {
+  const onChangeArea = debounce(async (e) => {
+    loadTeams(e.target.value, unity);
+    setArea(e.target.value);
+  }, 700);
+
+  function loadTeams(area = "", unity = "", page = 1) {
     setContentIsLoading(true);
     const token = "Bearer " + localStorage.getItem("token");
     api
       .get(
-        `/assessments/teams/${location.state?.assessmentId}?filter=${filter}&page=${page}`,
+        `/assessments/teams/${location.state?.assessmentId}?area=${area}&unity=${unity}&page=${page}`,
         {
           headers: {
             Authorization: token,
@@ -94,40 +107,58 @@ export default function TodasEquipes(props) {
         {" "}
         {`Todas Equipes - ${location.state?.assessmentGroupName} - ${teams.media}%`}
       </Heading>
+
       <HStack
-        width="40%"
-        minW="500px"
-        maxWidth="700px"
-        justifyContent="space-between"
+        w={"100%"}
+        maxWidth="1000px"
         alignItems="center"
+        justifyContent={"center"}
       >
-        <Input
-          onChange={onChangeSearch}
-          maxWidth="250px"
-          placeholder="Filtrar"
-          focusBorderColor={focusBorder}
-        />
-        <HStack>
-          <Button
-            isLoading={buttonIsLoading}
-            onClick={() => loadTeams(filter, teams.meta.current_page - 1)}
-            disabled={teams.meta.current_page === 1}
-            colorScheme="green"
-            leftIcon={<MdArrowBack />}
-          >
-            Voltar
-          </Button>
-          <Text>{`${teams.meta.current_page} de ${teams.meta.last_page}`}</Text>
-          <Button
-            isLoading={buttonIsLoading}
-            onClick={() => loadTeams(filter, teams.meta.current_page + 1)}
-            disabled={teams.meta.current_page === teams.meta.last_page}
-            colorScheme="green"
-            rightIcon={<MdArrowForward />}
-          >
-            Avançar
-          </Button>
-        </HStack>
+        <InputGroup maxWidth={"300px"}>
+          <InputLeftElement
+            pointerEvents="none"
+            children={<MdOutlineSearch color="gray.200" />}
+          />
+          <Input
+            onChange={onChangeUnity}
+            maxWidth="300px"
+            placeholder="Unidade"
+            focusBorderColor={focusBorder}
+          />
+        </InputGroup>
+        <InputGroup maxWidth={"300px"}>
+          <InputLeftElement
+            pointerEvents="none"
+            children={<MdOutlineSearch color="gray.200" />}
+          />
+          <Input
+            onChange={onChangeArea}
+            maxWidth="300px"
+            placeholder="Área"
+            focusBorderColor={focusBorder}
+          />
+        </InputGroup>
+      </HStack>
+      <HStack>
+        <Button
+          isLoading={buttonIsLoading}
+          onClick={() => loadTeams(filter, teams.meta.current_page - 1)}
+          disabled={teams.meta.current_page === 1}
+          colorScheme="green"
+          leftIcon={<MdArrowBack />}
+        >
+          Voltar
+        </Button>
+        <Text>{`${teams.meta.current_page} de ${teams.meta.last_page}`}</Text>
+        <Button
+          isLoading={buttonIsLoading}
+          onClick={() => loadTeams(filter, teams.meta.current_page + 1)}
+          disabled={teams.meta.current_page === teams.meta.last_page}
+          colorScheme="green"
+          rightIcon={<MdArrowForward />}
+        >
+          Avançar
+        </Button>
       </HStack>
       {contentIsLoading === true ? (
         <VStack

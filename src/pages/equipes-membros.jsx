@@ -5,6 +5,7 @@ import {
   Button,
   FormControl,
   Grid,
+  Icon,
   IconButton,
   Input,
   Modal,
@@ -200,7 +201,7 @@ export default function EquipesMembros(props) {
       });
   }
 
-  function loadMembers(filter = "", timeout = 1000, page = 1) {
+  function loadMembers(filter = "", timeout = 500, page = 1) {
     const token = "Bearer " + localStorage.getItem("token");
     api
       .get(
@@ -541,7 +542,18 @@ export default function EquipesMembros(props) {
           >
             <TabList>
               {competencies.map((competency, i) => (
-                <Tab>{i + 1}ª</Tab>
+                <Tab isDisabled={competency.completed_competencies === null}>
+                  {i + 1}ª
+                  {competency.completed_competencies !== null && (
+                    <Icon
+                      ml={2}
+                      w={5}
+                      h={5}
+                      color={"green.500"}
+                      as={MdOutlineCheck}
+                    />
+                  )}
+                </Tab>
               ))}
             </TabList>
           </Tabs>

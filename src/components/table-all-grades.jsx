@@ -6,6 +6,8 @@ import {
   HStack,
   IconButton,
   Input,
+  InputGroup,
+  InputLeftElement,
   Skeleton,
   Table,
   Tbody,
@@ -20,7 +22,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useMemo } from "react";
 import { CSVLink } from "react-csv";
-import { MdFileDownload } from "react-icons/md";
+import { MdFileDownload, MdOutlineSearch } from "react-icons/md";
 import { useHistory } from "react-router-dom";
 import { useGlobalFilter, useSortBy, useTable } from "react-table";
 import api from "../services/api";
@@ -199,18 +201,23 @@ export default function TableAllGrades({
           </VStack>
         ))}
       </Grid>
-      <Heading fontWeight="500" textAlign="center" mt="10">
+      <Heading mb={4} fontWeight="500" textAlign="center" mt="10">
         Notas
       </Heading>
       <HStack justifyContent="center">
-        <Input
-          mt="3"
-          focusBorderColor={focusBorderColor}
-          maxWidth="300px"
-          placeHolder="Filtrar"
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-        ></Input>
+        <InputGroup maxWidth={"300px"}>
+          <InputLeftElement
+            pointerEvents="none"
+            children={<MdOutlineSearch color="gray.200" />}
+          />
+          <Input
+            focusBorderColor={focusBorderColor}
+            maxWidth="300px"
+            placeHolder="Filtrar"
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+          ></Input>
+        </InputGroup>
       </HStack>
       <Table mt="6" {...getTableProps()}>
         <Thead>
