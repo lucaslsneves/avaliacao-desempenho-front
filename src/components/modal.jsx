@@ -37,6 +37,7 @@ export default function MyModal({
   availableToAnswer = false,
   manager = false,
   edit = false,
+  loadTable,
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isLoaded, setIsLoaded] = React.useState(true);
@@ -188,6 +189,8 @@ export default function MyModal({
             managerId: requestBody.managerId,
             availableToSee,
           });
+        } else {
+          loadTable();
         }
       })
       .catch((e) => {
@@ -402,7 +405,7 @@ export default function MyModal({
                   <Textarea
                     borderRadius="md"
                     focusBorderColor={focusColor}
-                    value={competency.justification}
+                    value={competency.justification || ""}
                     m="12px 0"
                     placeholder="Digite observações sobre a nota aqui , este campo é OPCIONAL"
                     size="sm"
@@ -416,7 +419,12 @@ export default function MyModal({
             })}
           </ModalBody>
           <ModalFooter display="flex" justifyContent="space-between">
-            <Text fontWeight={700}>Média: {average.toFixed(1)}%</Text>
+            <Text
+              color={average >= 80 ? "green.500" : "red.500"}
+              fontWeight={700}
+            >
+              Média: {average.toFixed(1)}%
+            </Text>
             <Button
               type="submit"
               isLoading={isLoadedButton}

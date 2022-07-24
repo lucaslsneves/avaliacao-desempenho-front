@@ -45,6 +45,10 @@ export default function TableMembers({
   const history = useHistory();
 
   useEffect(() => {
+    loadTable();
+  }, []);
+
+  const loadTable = () => {
     const token = "Bearer " + localStorage.getItem("token");
     api
       .get(`/teams/members/grades/manager?team=${requestBody?.teamId}`, {
@@ -86,8 +90,7 @@ export default function TableMembers({
           setIsLoaded(false);
         }
       });
-  }, []);
-
+  };
   const columns = useMemo(
     () => [
       {
@@ -230,6 +233,7 @@ export default function TableMembers({
                           return (
                             <Td>
                               <MyModal
+                                loadTable={loadTable}
                                 availableToAnswer={availableToAnswer}
                                 requestBody={{
                                   teamId: requestBody.teamId,
@@ -248,7 +252,8 @@ export default function TableMembers({
 
                         if (cell.column.id === "grade") {
                           const intGrade = Number(cell.value);
-                          const color = intGrade > 80 ? "green.500" : "red.500";
+                          const color =
+                            intGrade >= 80 ? "green.500" : "red.500";
                           return (
                             <Td
                               {...cell.getCellProps()}
