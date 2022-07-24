@@ -1,6 +1,12 @@
 import { useColorModeValue } from "@chakra-ui/color-mode";
 import { Heading, HStack, VStack } from "@chakra-ui/layout";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Badge,
   Button,
   FormControl,
@@ -18,9 +24,9 @@ import {
   Tabs,
   Text,
   Textarea,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-
 import { debounce } from "lodash";
 import React, { useEffect } from "react";
 import {
@@ -54,11 +60,13 @@ export default function EquipesMembros(props) {
   const [isListView, setIsListView] = React.useState(false);
   const [isLoadingButtonListView, setIsLoadingButtonListView] =
     React.useState(false);
-
+  const [finishButtonLoading, setFinishButtonLoading] = React.useState(false);
   const history = useHistory();
   const location = useLocation();
   const toast = useToast();
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
   const onChangeSearch = debounce(async (e) => {
     loadMembers(e.target.value, 0);
     setSearch(e.target.value);
@@ -213,20 +221,17 @@ export default function EquipesMembros(props) {
       )
       .then((response) => {
         if (competenciesIndex === competencies.length - 1) {
-          setStatus("finalizado");
           setIsListView(false);
+          setIsTable(true);
           toast({
             title: "Sucesso!",
-            description: "Você concluíu a avaliação",
+            description: "Agora você já pode finalizar a avaliação",
             position: "top",
             status: "success",
             duration: 5000,
             isClosable: true,
           });
         } else {
-          if (status !== "finalizado") {
-            setStatus("andamento");
-          }
           setCompetenciesIndex(competenciesIndex + 1);
           toast({
             title: "Sucesso!",
@@ -238,6 +243,7 @@ export default function EquipesMembros(props) {
           });
         }
         setIsLoadingButtonListView(false);
+        if (status === "pendente") updateStatusAndamento();
       })
       .catch((e) => {
         if (e.response) {
@@ -283,6 +289,124 @@ export default function EquipesMembros(props) {
     event.preventDefault();
   };
 
+  const getStatus = async (event) => {
+    const token = "Bearer " + localStorage.getItem("token");
+    console.log(location.state);
+    api
+      .post(
+        `/manager-status`,
+        {
+          teamId: location.state?.teamId,
+          managerId: location.state.managerId,
+          assessmentId: location.state.assessmentId,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        setStatus(response.data.status.status);
+      })
+      .catch((e) => {
+        if (e.response) {
+          if (e.response.status === 401) {
+            localStorage.setItem("token", "");
+            localStorage.setItem("isAuthenticated", "false");
+            history.push("/");
+          } else {
+            toast({
+              title: "Erro ao avaliar!",
+              description: "Não foi possível avaliar este colaborador",
+              position: "top-right",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+            setIsLoadingButtonListView(false);
+            return;
+          }
+        }
+      });
+  };
+
+  const updateStatusAndamento = async (event) => {
+    const token = "Bearer " + localStorage.getItem("token");
+    console.log(location.state);
+    api
+      .put(
+        `/manager-status`,
+        {
+          teamId: location.state?.teamId,
+          managerId: location.state.managerId,
+          status: "andamento",
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        setStatus(response.data.status);
+      })
+      .catch((e) => {
+        if (e.response) {
+          if (e.response.status === 401) {
+            localStorage.setItem("token", "");
+            localStorage.setItem("isAuthenticated", "false");
+            history.push("/");
+          }
+        }
+      });
+  };
+
+  const finishAssessment = async (event) => {
+    setFinishButtonLoading(true);
+    const token = "Bearer " + localStorage.getItem("token");
+    console.log(location.state);
+    api
+      .post(
+        `/members/finish-manager-assessment`,
+        {
+          teamId: location.state?.teamId,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+      .then((response) => {
+        setStatus("finalizado");
+        setIsTable(false);
+        setIsListView(false);
+        setIsLoaded(false);
+        onClose();
+      })
+      .catch((e) => {
+        if (e.response) {
+          if (e.response.status === 401) {
+            localStorage.setItem("token", "");
+            localStorage.setItem("isAuthenticated", "false");
+            history.push("/");
+          } else if (e.response.status === 404) {
+            toast({
+              title: "Erro ao avaliar!",
+              description:
+                "Para finalizar a avaliação avalie toda sua equipe primeiro",
+              position: "top-right",
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+            setIsLoadingButtonListView(false);
+            return;
+          }
+        }
+      });
+  };
   const focusBorderColor = useColorModeValue("green.400", "green.200");
 
   const headingColor = useColorModeValue("gray.700", "white");
@@ -297,6 +421,10 @@ export default function EquipesMembros(props) {
       window.scrollTo(0, 0);
     }
   }, [isListView, competenciesIndex]);
+
+  useEffect(() => {
+    getStatus();
+  }, []);
 
   if (
     !location.state?.teamId ||
@@ -347,7 +475,16 @@ export default function EquipesMembros(props) {
               Resumo
             </Heading>
           </VStack>
-          <Button colorScheme={"green"}>Finalizar avaliação</Button>
+
+          <Button
+            disabled={status === "finalizado"}
+            onClick={onOpen}
+            colorScheme={"green"}
+          >
+            {status === "finalizado"
+              ? "Avaliçao finalizada"
+              : "Finalizar avaliação"}
+          </Button>
         </HStack>
         <TableMembers
           assessmentId={location.state.assessmentId}
@@ -357,8 +494,42 @@ export default function EquipesMembros(props) {
             teamName: location.state.teamName,
             assessmentId: location.state?.assessmentId,
           }}
-          availableToAnswer={location.state.availableToAnswer}
+          availableToAnswer={
+            location.state.availableToAnswer && status !== "finalizado" ? 1 : 0
+          }
         />
+
+        <AlertDialog
+          isOpen={isOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onClose}
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Finalizar avaliação
+              </AlertDialogHeader>
+
+              <AlertDialogBody fontWeight={500}>
+                Após finalizar a avaliação você não poderá alterar nenhuma nota!
+              </AlertDialogBody>
+
+              <AlertDialogFooter>
+                <Button ref={cancelRef} onClick={onClose}>
+                  Cancelar
+                </Button>
+                <Button
+                  isLoading={finishButtonLoading}
+                  colorScheme="green"
+                  onClick={finishAssessment}
+                  ml={3}
+                >
+                  Finalizar
+                </Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
       </>
     );
   }
@@ -397,9 +568,15 @@ export default function EquipesMembros(props) {
                   variant="outline"
                   cursor={"pointer"}
                   colorScheme="green"
+                  disabled={
+                    !location.state.availableToAnswer || status === "finalizado"
+                  }
                   icon={<MdList />}
                   onClick={() => {
-                    setIsListView(true);
+                    {
+                      setCompetenciesIndex(0);
+                      setIsListView(true);
+                    }
                   }}
                 />
               </HStack>
@@ -409,7 +586,7 @@ export default function EquipesMembros(props) {
               <HStack mt="5" spacing="5" display="inline-flex">
                 {status === "finalizado" && (
                   <Badge fontSize={"sm"} colorScheme={"green"}>
-                    Status da Avaliação: Concluída
+                    Status da Avaliação: Finalizada
                   </Badge>
                 )}
                 {status === "andamento" && (
@@ -418,16 +595,19 @@ export default function EquipesMembros(props) {
                   </Badge>
                 )}
                 {status === "pendente" && (
-                  <Badge fontSize={"sm"}>Status da Avaliação: Pendente</Badge>
+                  <Badge bgColor={"gray.300"} fontSize={"sm"}>
+                    Status da Avaliação: Pendente
+                  </Badge>
                 )}
                 <Button
                   cursor="pointer"
                   onClick={() => setIsTable(!isTable)}
                   variant="outline"
                   leftIcon={<VscGraph />}
+                  disabled={status === "finalizado"}
                   colorScheme="green"
                 >
-                  Finalizar avaliação
+                  {status === "finalizado" ? "Resumo" : "Finalizar avaliação"}
                 </Button>
               </HStack>
             </VStack>
@@ -578,7 +758,7 @@ export default function EquipesMembros(props) {
           <VStack alignItems={"flex-start"}>
             {status === "finalizado" && (
               <Badge fontSize={"sm"} colorScheme={"green"}>
-                Status da Avaliação: Concluída
+                Status da Avaliação: Finalizada
               </Badge>
             )}
             {status === "andamento" && (
@@ -587,7 +767,9 @@ export default function EquipesMembros(props) {
               </Badge>
             )}
             {status === "pendente" && (
-              <Badge fontSize={"sm"}>Status da Avaliação: Pendente</Badge>
+              <Badge bgColor={"gray.300"} fontSize={"sm"}>
+                Status da Avaliação: Pendente
+              </Badge>
             )}
             <Heading
               fontSize={{ base: "22px", md: "26px", lg: "33px" }}
@@ -610,8 +792,14 @@ export default function EquipesMembros(props) {
                 variant="outline"
                 cursor={"pointer"}
                 colorScheme="green"
+                disabled={
+                  !location.state.availableToAnswer || status === "finalizado"
+                }
                 icon={<MdList />}
-                onClick={() => setIsListView(true)}
+                onClick={() => {
+                  setCompetenciesIndex(0);
+                  setIsListView(true);
+                }}
               />
             </HStack>
           </VStack>
@@ -632,7 +820,7 @@ export default function EquipesMembros(props) {
                 leftIcon={<VscGraph />}
                 colorScheme="green"
               >
-                Finalizar avaliação
+                {status === "finalizado" ? "Resumo" : "Finalizar avaliação"}
               </Button>
             </HStack>
             <HStack paddingTop="4">
@@ -669,7 +857,7 @@ export default function EquipesMembros(props) {
         >
           {members.map((member) => (
             <UserCard
-              manager={location.state.manager}
+              manager={location.state.managerId}
               assessmentId={location.state.assessmentId}
               key={member.id}
               avgProps={member.avg}
@@ -678,12 +866,16 @@ export default function EquipesMembros(props) {
               checkedProps={member.evalueted === 1}
               role={member.role}
               availableToSee={location.state.availableToSee}
-              availableToAnswer={location.state.availableToAnswer}
+              availableToAnswer={
+                location.state.availableToAnswer && status !== "finalizado"
+                  ? 1
+                  : 0
+              }
               requestBody={{
                 teamId: location.state.teamId,
                 collaboratorId: member.id,
                 assessmentId: location.state?.assessmentId,
-                managerId: location.state.manager,
+                managerId: location.state.managerId,
                 teamName: location.state.teamName,
                 evalueted: member.evalueted === 1,
               }}

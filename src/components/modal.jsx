@@ -233,6 +233,7 @@ export default function MyModal({
             onClick={handleOpen}
             colorScheme={"blue"}
             icon={<MdModeEditOutline />}
+            disabled={!availableToAnswer}
           />
         ) : (
           <Button
@@ -247,8 +248,9 @@ export default function MyModal({
               boxShadow: "lg",
             }}
             onClick={handleOpen}
+            disabled={!availableToAnswer}
           >
-            Visualizar
+            Avaliar
           </Button>
         )}
 
@@ -314,6 +316,7 @@ export default function MyModal({
           onClick={handleOpen}
           colorScheme={"blue"}
           icon={<MdModeEditOutline />}
+          disabled={!availableToAnswer}
         />
       ) : (
         <Button
@@ -328,8 +331,9 @@ export default function MyModal({
             boxShadow: "lg",
           }}
           onClick={handleOpen}
+          disabled={!availableToAnswer}
         >
-          Visualizar
+          Avaliar
         </Button>
       )}
 

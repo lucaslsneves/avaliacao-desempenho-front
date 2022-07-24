@@ -205,7 +205,7 @@ export default function UserCard({
           variant="outline"
           rightIcon={feedbackConfirmation ? <FaCheck /> : <VscFeedback />}
           onClick={onOpen}
-          disabled={feedbackConfirmation}
+          disabled={feedbackConfirmation || !availableToSee}
         >
           {feedbackConfirmation ? "Feedback realizado" : "Confirmar feedback"}
         </Button>

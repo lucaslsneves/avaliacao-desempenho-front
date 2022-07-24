@@ -118,7 +118,7 @@ export default function Equipes(props) {
             </Heading>
             {teams.teams.map((team) => (
               <TeamHorizontalCard
-                isAvailable={location.state.availableToAnswer}
+                isAvailable={true}
                 unity={team.unity}
                 role={team.role}
                 name={"Avalie sua equipe"}
@@ -130,6 +130,7 @@ export default function Equipes(props) {
                     teamName: team.area,
                     assessmentId: location.state.assessmentId,
                     availableToSee: location.state.availableToSee,
+                    availableToAnswer: location.state.availableToAnswer,
                     managerId: team.id,
                   });
                 }}
