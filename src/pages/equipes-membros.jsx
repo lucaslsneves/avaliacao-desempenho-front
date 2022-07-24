@@ -5,16 +5,8 @@ import {
   Button,
   FormControl,
   Grid,
-  Icon,
   IconButton,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   SimpleGrid,
   Skeleton,
   Slider,
@@ -26,7 +18,6 @@ import {
   Tabs,
   Text,
   Textarea,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 
@@ -35,10 +26,8 @@ import React, { useEffect } from "react";
 import {
   MdArrowBack,
   MdArrowForward,
-  MdClose,
   MdGridView,
   MdList,
-  MdOutlineCheck,
 } from "react-icons/md";
 
 import { VscGraph } from "react-icons/vsc";
@@ -62,12 +51,10 @@ export default function EquipesMembros(props) {
   const [competencies, setCompetencies] = React.useState([]);
   const [competenciesIndex, setCompetenciesIndex] = React.useState(0);
   const [memberGrades, setMemberGrades] = React.useState([]);
-  const [isListView, setIsListView] = React.useState(true);
+  const [isListView, setIsListView] = React.useState(false);
   const [isLoadingButtonListView, setIsLoadingButtonListView] =
     React.useState(false);
-  const [feedback, setFeedback] = React.useState(false);
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const history = useHistory();
   const location = useLocation();
   const toast = useToast();
@@ -116,57 +103,6 @@ export default function EquipesMembros(props) {
       });
   }
 
-  function confirmFeedback() {
-    const token = "Bearer " + localStorage.getItem("token");
-
-    api
-      .post(
-        `/feedback`,
-        {
-          teamId: location.state?.teamId,
-          managerId: location.state?.managerId,
-          assessmentId: location.state?.assessmentId,
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((response) => {
-        setFeedback(true);
-        onClose();
-        toast({
-          title: "Sucesso",
-          description: "Confirmação de Feedback realizada com sucesso!",
-          position: "top",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-      })
-      .catch((e) => {
-        if (e.response) {
-          if (e.response.status === 401) {
-            localStorage.setItem("token", "");
-            localStorage.setItem("isAuthenticated", "false");
-            history.push("/");
-          } else {
-            toast({
-              title: "Erro ao confirmar!",
-              description: "Não foi possível confirmar o Feedback!",
-              position: "top-right",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-            });
-            setIsLoadingButtonListView(false);
-            return;
-          }
-        }
-      });
-  }
-
   function loadGrades(competencyId, isManager = false) {
     const token = "Bearer " + localStorage.getItem("token");
     api
@@ -202,6 +138,7 @@ export default function EquipesMembros(props) {
   }
 
   function loadMembers(filter = "", timeout = 500, page = 1) {
+    setIsLoaded(true);
     const token = "Bearer " + localStorage.getItem("token");
     api
       .get(
@@ -238,53 +175,6 @@ export default function EquipesMembros(props) {
       });
   }
 
-  function getStatus() {
-    const token = "Bearer " + localStorage.getItem("token");
-    api
-      .post(
-        `/manager-status`,
-        {
-          teamId: location.state?.teamId,
-          managerId: location.state?.managerId,
-          assessmentId: location.state?.assessmentId,
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((response) => {
-        if (response.data.statusAlreadyExists[0].status === "finalizado") {
-          setIsListView(false);
-        }
-        if (response.data?.feedbackAlreadyExists.length !== 0) {
-          setFeedback(true);
-        }
-        setStatus(response.data.statusAlreadyExists[0].status);
-      })
-      .catch((e) => {});
-  }
-
-  function updateStatus(status) {
-    const token = "Bearer " + localStorage.getItem("token");
-    api
-      .put(
-        `/manager-status`,
-        {
-          status,
-          teamId: location.state?.teamId,
-          managerId: location.state?.managerId,
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-      .then((response) => {})
-      .catch((e) => {});
-  }
   function addGradesListView() {
     let allFieldsAreFilleds = true;
     for (let i = 0; i < memberGrades.length; i++) {
@@ -324,7 +214,6 @@ export default function EquipesMembros(props) {
       .then((response) => {
         if (competenciesIndex === competencies.length - 1) {
           setStatus("finalizado");
-          updateStatus("finalizado");
           setIsListView(false);
           toast({
             title: "Sucesso!",
@@ -337,7 +226,6 @@ export default function EquipesMembros(props) {
         } else {
           if (status !== "finalizado") {
             setStatus("andamento");
-            updateStatus("andamento");
           }
           setCompetenciesIndex(competenciesIndex + 1);
           toast({
@@ -410,9 +298,6 @@ export default function EquipesMembros(props) {
     }
   }, [isListView, competenciesIndex]);
 
-  useEffect(() => {
-    getStatus();
-  }, []);
   if (
     !location.state?.teamId ||
     !location.state?.teamName ||
@@ -428,42 +313,59 @@ export default function EquipesMembros(props) {
     return <h1>Ops,algo deu errado! Tente novamente mais tarde!</h1>;
   }
 
+  if (isTable) {
+    return (
+      <>
+        <HStack
+          min-width={"500px"}
+          spacing={12}
+          alignItems="center"
+          justifyContent="space-between"
+          paddingX="16"
+        >
+          <VStack
+            display="inline-flex"
+            justifyContent={"flex-start"}
+            alignItems={"start"}
+          >
+            <Button
+              cursor="pointer"
+              onClick={() => setIsTable(!isTable)}
+              variant="ghost"
+              leftIcon={<MdArrowBack />}
+              colorScheme="green"
+              fontSize={"14px"}
+            >
+              Voltar
+            </Button>
+            <Heading
+              fontWeight={700}
+              size="xl"
+              marginTop={0}
+              color={headingColor}
+            >
+              Resumo
+            </Heading>
+          </VStack>
+          <Button colorScheme={"green"}>Finalizar avaliação</Button>
+        </HStack>
+        <TableMembers
+          assessmentId={location.state.assessmentId}
+          requestBody={{
+            members,
+            teamId: location.state.teamId,
+            teamName: location.state.teamName,
+            assessmentId: location.state?.assessmentId,
+          }}
+          availableToAnswer={location.state.availableToAnswer}
+        />
+      </>
+    );
+  }
+
   if (isListView) {
     return (
       <>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Confirmação de Feedback</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text textAlign={"center"} fontSize={"lg"}>
-                Você confirma que deu o
-                <Text fontWeight={700}>feedback da avaliação</Text> para sua
-                equipe ?
-              </Text>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                rightIcon={<MdClose />}
-                colorScheme="blue"
-                mr={3}
-                onClick={onClose}
-              >
-                Fechar
-              </Button>
-              <Button
-                rightIcon={<MdOutlineCheck />}
-                colorScheme={"green"}
-                variant="ghost"
-                onClick={() => confirmFeedback()}
-              >
-                Confirmo
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
         <VStack mb={5}>
           <HStack
             w={"100%"}
@@ -475,6 +377,14 @@ export default function EquipesMembros(props) {
             mb={10}
           >
             <VStack alignItems={"flex-start"}>
+              <Heading
+                fontSize={{ base: "22px", md: "26px", lg: "33px" }}
+                marginTop={3}
+                color={headingColor}
+              >
+                {" "}
+                {location.state.teamName}
+              </Heading>
               <HStack>
                 <IconButton
                   variant="outline"
@@ -482,7 +392,6 @@ export default function EquipesMembros(props) {
                   colorScheme="green"
                   icon={<MdGridView />}
                   onClick={() => setIsListView(false)}
-                  disabled={status !== "finalizado"}
                 />
                 <IconButton
                   variant="outline"
@@ -493,15 +402,6 @@ export default function EquipesMembros(props) {
                     setIsListView(true);
                   }}
                 />
-                <Button
-                  colorScheme={"green"}
-                  disabled={!location.state.availableToSee || feedback}
-                  onClick={() => onOpen()}
-                >
-                  {feedback === true
-                    ? "Feedback confirmado"
-                    : "Confirmar Feedback"}
-                </Button>
               </HStack>
             </VStack>
 
@@ -520,15 +420,15 @@ export default function EquipesMembros(props) {
                 {status === "pendente" && (
                   <Badge fontSize={"sm"}>Status da Avaliação: Pendente</Badge>
                 )}
-                {/* <Button
-                cursor="pointer"
-                onClick={() => setIsTable(!isTable)}
-                variant="outline"
-                leftIcon={<VscGraph />}
-                colorScheme="green"
-              >
-                Relatórios
-              </Button> */}
+                <Button
+                  cursor="pointer"
+                  onClick={() => setIsTable(!isTable)}
+                  variant="outline"
+                  leftIcon={<VscGraph />}
+                  colorScheme="green"
+                >
+                  Finalizar avaliação
+                </Button>
               </HStack>
             </VStack>
           </HStack>
@@ -542,18 +442,7 @@ export default function EquipesMembros(props) {
           >
             <TabList>
               {competencies.map((competency, i) => (
-                <Tab isDisabled={competency.completed_competencies === null}>
-                  {i + 1}ª
-                  {competency.completed_competencies !== null && (
-                    <Icon
-                      ml={2}
-                      w={5}
-                      h={5}
-                      color={"green.500"}
-                      as={MdOutlineCheck}
-                    />
-                  )}
-                </Tab>
+                <Tab isDisabled>{i + 1}ª</Tab>
               ))}
             </TabList>
           </Tabs>
@@ -586,7 +475,6 @@ export default function EquipesMembros(props) {
               borderRadius={"6px"}
               backgroundColor="#fff"
               alignItems={"flex-start"}
-              boxShadow={"base"}
             >
               <HStack
                 width={"100%"}
@@ -651,43 +539,6 @@ export default function EquipesMembros(props) {
     );
   }
 
-  if (isTable) {
-    return (
-      <>
-        <HStack
-          min-width={"500px"}
-          spacing={12}
-          alignItems="center"
-          justifyContent="space-between"
-          paddingX="16"
-        >
-          <Heading size="lg" marginTop={3} color={headingColor}>
-            Minhas avaliações - {localStorage.getItem("user_name")}
-          </Heading>
-          <HStack display="inline-flex">
-            <Button
-              cursor="pointer"
-              onClick={() => setIsTable(!isTable)}
-              variant="outline"
-              leftIcon={<VscGraph />}
-              colorScheme="green"
-            >
-              Avaliações
-            </Button>
-          </HStack>
-        </HStack>
-        <TableMembers
-          assessmentId={location.state.assessmentId}
-          requestBody={{
-            members,
-            teamId: location.state.teamId,
-            teamName: location.state.teamName,
-          }}
-        />
-      </>
-    );
-  }
-
   if (isLoaded) {
     return (
       <>
@@ -716,39 +567,6 @@ export default function EquipesMembros(props) {
   if (!isLoaded) {
     return (
       <>
-        <Modal isOpen={isOpen} onClose={onClose}>
-          <ModalOverlay />
-          <ModalContent>
-            <ModalHeader>Confirmação de Feedback</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              <Text textAlign={"center"} fontSize={"lg"}>
-                Você confirma que deu o
-                <Text fontWeight={700}>feedback da avaliação</Text> para sua
-                equipe ?
-              </Text>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button
-                rightIcon={<MdClose />}
-                colorScheme="blue"
-                mr={3}
-                onClick={onClose}
-              >
-                Fechar
-              </Button>
-              <Button
-                rightIcon={<MdOutlineCheck />}
-                colorScheme={"green"}
-                variant="ghost"
-                onClick={() => confirmFeedback()}
-              >
-                Confirmo
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
         <HStack
           flexDirection={{ base: "column", md: "column", lg: "row" }}
           min-width={"500px"}
@@ -787,7 +605,6 @@ export default function EquipesMembros(props) {
                 colorScheme="green"
                 icon={<MdGridView />}
                 onClick={() => setIsListView(false)}
-                disabled={status !== "finalizado"}
               />
               <IconButton
                 variant="outline"
@@ -796,16 +613,6 @@ export default function EquipesMembros(props) {
                 icon={<MdList />}
                 onClick={() => setIsListView(true)}
               />
-
-              <Button
-                colorScheme={"green"}
-                disabled={!location.state.availableToSee || feedback}
-                onClick={() => onOpen()}
-              >
-                {feedback === true
-                  ? "Feedback confirmado"
-                  : "Confirmar Feedback"}
-              </Button>
             </HStack>
           </VStack>
 
@@ -818,15 +625,15 @@ export default function EquipesMembros(props) {
                 placeholder="Buscar"
               />
 
-              {/* <Button
+              <Button
                 cursor="pointer"
                 onClick={() => setIsTable(!isTable)}
                 variant="outline"
                 leftIcon={<VscGraph />}
                 colorScheme="green"
               >
-                Relatórios
-              </Button> */}
+                Finalizar avaliação
+              </Button>
             </HStack>
             <HStack paddingTop="4">
               <Button
@@ -865,14 +672,18 @@ export default function EquipesMembros(props) {
               manager={location.state.manager}
               assessmentId={location.state.assessmentId}
               key={member.id}
+              avgProps={member.avg}
               name={member.name}
-              checked={member.evalueted === 1}
+              feedbackConfirmationProps={member.feedback ? true : false}
+              checkedProps={member.evalueted === 1}
               role={member.role}
               availableToSee={location.state.availableToSee}
               availableToAnswer={location.state.availableToAnswer}
               requestBody={{
                 teamId: location.state.teamId,
                 collaboratorId: member.id,
+                assessmentId: location.state?.assessmentId,
+                managerId: location.state.manager,
                 teamName: location.state.teamName,
                 evalueted: member.evalueted === 1,
               }}

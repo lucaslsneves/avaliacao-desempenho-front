@@ -251,6 +251,7 @@ export default function CriarAvaliacao() {
                   selected={startDate}
                   onChange={(date) => setStartDate(date)}
                   locale="pt"
+                  dateFormat="dd/MM/yyyy"
                 />
               </Box>
             </VStack>
@@ -265,6 +266,7 @@ export default function CriarAvaliacao() {
               >
                 <DatePicker
                   selected={endDate}
+                  dateFormat="dd/MM/yyyy"
                   onChange={(date) => setEndDate(date)}
                   locale="pt"
                 />
