@@ -188,6 +188,7 @@ export default function MyModal({
             assessmentId: assessmentId,
             managerId: requestBody.managerId,
             availableToSee,
+            availableToAnswer,
           });
         } else {
           loadTable();

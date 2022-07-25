@@ -48,7 +48,7 @@ export default function TableMyGrades({ teamId = 0 }) {
         let overall = 0;
 
         response.data.averages.forEach(
-          (average) => (overall += average.average)
+          (average) => (overall += Number(average.average))
         );
 
         if (response.data.averages.length !== 0)
@@ -265,7 +265,11 @@ export default function TableMyGrades({ teamId = 0 }) {
           <Text fontSize="lg" fontWeight="500">
             Média Geral
           </Text>
-          <Text fontSize="lg" fontWeight="700">
+          <Text
+            color={overall >= 80 ? "green.500" : "red.500"}
+            fontSize="lg"
+            fontWeight="700"
+          >
             {overall?.toFixed(1)}%
           </Text>
         </VStack>
@@ -274,8 +278,12 @@ export default function TableMyGrades({ teamId = 0 }) {
             <Text fontSize="lg" fontWeight="500">
               {average.name}
             </Text>
-            <Text fontSize="lg" fontWeight="700">
-              {average.average?.toFixed(1)}%
+            <Text
+              color={Number(average.average) >= 80 ? "green.500" : "red.500"}
+              fontSize="lg"
+              fontWeight="700"
+            >
+              {Number(average.average)?.toFixed(1)}%
             </Text>
           </VStack>
         ))}

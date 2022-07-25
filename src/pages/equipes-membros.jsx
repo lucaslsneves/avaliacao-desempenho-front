@@ -391,17 +391,19 @@ export default function EquipesMembros(props) {
             localStorage.setItem("token", "");
             localStorage.setItem("isAuthenticated", "false");
             history.push("/");
-          } else if (e.response.status === 404) {
+          } else if (e.response.status === 400) {
             toast({
-              title: "Erro ao avaliar!",
+              title: "Não permitido!",
               description:
                 "Para finalizar a avaliação avalie toda sua equipe primeiro",
               position: "top-right",
               status: "error",
-              duration: 5000,
+              duration: 6000,
               isClosable: true,
             });
             setIsLoadingButtonListView(false);
+            setFinishButtonLoading(false);
+            onClose();
             return;
           }
         }
